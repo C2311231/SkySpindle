@@ -1,0 +1,145 @@
+.navbar {
+    width: 100%;
+    height: 5vh;
+}
+.pageContent {
+    min-height: 95vh;
+    margin: 0;
+    width: 100%;
+    background-color: #121212;
+    padding: 0vh;
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-top: 30px;
+    box-sizing: border-box;
+    display: flex;
+}
+body {
+    margin: 0;
+}
+.element {
+    color: white;
+    background-color: #1e1e1e;
+    height: auto;
+    width: auto;
+    margin: 10px;
+    border-radius: 3px;
+}
+.elementTitle {
+    height: 5vh;
+    background-color: #272727;
+    border-radius: 3px 3px 0px 0px;
+    align-items:center;
+    display: flex;
+    justify-content:center;
+}
+#columnsm {
+    height: 100%;
+    width: 25%;
+}
+#columnlg {
+    height: 100%;
+    width: 45%;
+}
+#columnmd {
+    height: 100%;
+    width: 30%;
+}
+
+.JogControl {
+    width: 50%;
+    position: relative;
+    padding: 0;
+    max-width: 200px;
+    aspect-ratio: 1/1
+    
+}
+.JogBtnL {
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    transform: translate(0, -50%);
+}
+.JogBtnR {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(0, -50%);
+}
+.JogBtnU {
+    position: absolute;
+    top: 30%;
+    left: 30%;
+    transform: translate(0, -50%);
+}
+.JogBtnD {
+    position: absolute;
+    top: 70%;
+    left: 30%;
+    transform: translate(0, -50%);
+    
+}
+
+.JogBtnUp {
+    position: absolute;
+    top: 30%;
+    left: 80%;
+    transform: translate(0, -50%);
+}
+.JogBtnDown {
+    position: absolute;
+    top: 70%;
+    left: 80%;
+    transform: translate(0, -50%);
+}
+.JogBtn {
+    background-color: #272727;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+@media (min-width:751px) and (max-width: 1900px) {
+    #columnsm {
+        height: fit-content;
+        width: 50% !important;
+        float: left;
+    }
+    #columnlg {
+        height: fit-content;
+        width: 100% !important;
+    }
+    #columnmd {
+        height: fit-content;
+        width: 50% !important;
+        float: right;
+    }
+    .pageContent {
+        display:flex;
+        padding-left: 2px;
+        padding-right: 2px;
+        padding-top: 2px;
+    }
+    .element {
+        margin: 2px;
+    }
+}
+@media (min-width:1px) and (max-width: 750px) {
+    #columnsm {
+        height: fit-content;
+        width: 100%;
+    }
+    #columnlg {
+        height: fit-content;
+        width: 100%;
+    }
+    #columnmd {
+        height: fit-content;
+        width: 100%;
+    }
+    .pageContent {
+        display:block;
+        padding-left: 5px;
+        padding-right: 5px;
+        padding-top: 5px;
+    }
+}

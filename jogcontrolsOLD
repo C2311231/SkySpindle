@@ -1,0 +1,126 @@
+        <div class="JogControls">
+            <div class="xy incrementLarge">
+
+                <button class="xyBTN X0"></button>
+                <button class="xyBTN Y0"></button>
+                <button class="xyBTN X1"></button>
+                <button class="xyBTN Y1"></button>
+            </div>
+            <div class="xy incrementMedium">
+                <button class="xyBTN X0"></button>
+                <button class="xyBTN Y0"></button>
+                <button class="xyBTN X1"></button>
+                <button class="xyBTN Y1"></button>
+            </div>
+            <div class="xy incrementsmall">
+                <button class="xyBTN X0"><p>X-</p></button>
+                <button class="xyBTN Y0"><p>Y-</p></button>
+                <button class="xyBTN X1"><p>X+</p></button>
+                <button class="xyBTN Y1"><p>Y+</p></button>
+            </div>
+            <div class="z">
+                <button class="zBtn">Up a lot</button>
+                <button class="zBtn">Up more</button>
+                <button class="zBtn">Up</button>
+                <button class="zBtn">Down</button>
+                <button class="zBtn">Down more</button>
+                <button class="zBtn">Down a lot</button>
+            </div>
+        </div>
+
+
+
+
+
+        .JogControls {
+            width: 350px;
+            height: 250px;
+            padding: 0;
+            margin: 0;
+            position: relative;
+        }
+        .xy {
+            width: 250px;
+            height: 250px;
+            display: grid;
+            grid-template-columns:50%, 50%;
+            grid-template-rows:50%, 50%;
+            transform: rotate(-45deg);
+            position: absolute;
+            left: 40%;
+            top: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+        }
+        .z {
+            width: 20%;
+            float: right;
+            height: 100%;
+        }
+        .zBtn {
+            width: 100%;
+            height: 16.6%;
+            margin: 0;
+            padding: 0;
+            border-radius: 10px;
+        }
+        
+        .xyBTN {
+            border-radius: 24rem 0 0 0;
+            /* margin: 2px; */
+            cursor: pointer;
+        }
+        .X0 {
+            transform: rotate(0deg);
+            grid-column: 1;
+            grid-row: 1;
+        }
+        .Y0 {
+            transform: rotate(-90deg);
+            grid-column: 1;
+            grid-row: 2;
+        }
+        .X1 {
+            transform: rotate(180deg);
+            grid-column: 2;
+            grid-row: 2;
+        }
+        .Y1 {
+            transform: rotate(90deg);
+            grid-column: 2;
+            grid-row: 1;
+        }
+        
+        .incrementMedium {
+            height: 200px; 
+            width: 200px; 
+            z-index: 2;
+            overflow: hidden;
+        }
+        .incrementsmall {
+            height: 150px; 
+            width: 150px; 
+            z-index: 3;
+            overflow: hidden;
+        }
+        .incrementLarge {
+            width: 250px;
+            height: 250px;
+            overflow: hidden;
+        }
+        
+        .incrementsmall p{
+            padding: 0;
+            margin: 0;
+        }
+        .X0 p{
+            transform: rotate(45deg);
+        }
+        .Y0 p{
+            transform: rotate(135deg);
+        }
+        .X1 p{
+            transform: rotate(225deg);
+        }
+        .Y1 p{
+            transform: rotate(-45deg);
+        }
