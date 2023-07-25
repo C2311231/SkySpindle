@@ -169,7 +169,7 @@ body {
 
 .homing {
     margin: auto;
-    /* width: 50%; */
+    width: 50%;
     display: grid;
     padding: 0;
     grid-template-columns: 100%;
@@ -186,10 +186,10 @@ body {
     display: grid;
     grid-template-columns: 33.333333% 33.333333% 33.333333%;
 }
-#hAll{
+.hAll{
     border-radius: 5px 0px 0px 0px !important;
 }
-#hXY{
+.hXY{
     border-radius: 0px 5px 0px 0px !important;
 }
 .controlSection {
