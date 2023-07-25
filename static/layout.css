@@ -18,7 +18,7 @@ body {
     margin: 0;
 }
 .element {
-    color: white;
+    color: lightgray;
     background-color: #1e1e1e;
     height: auto;
     width: auto;
@@ -97,6 +97,10 @@ body {
     background-color: #272727;
     border-radius: 5px;
     padding: 5px;
+    border-width: 1px;
+    border-color: black;
+    outline: none;
+    border-style: groove;
 }
 .JogBtn:active {
     background-color: black;
@@ -153,7 +157,7 @@ body {
 }
 
 .homeBtn {
-    background-color: orange;
+    background-color: #fb8c00;
     border-radius: 5px;
     padding: 5px;
     box-sizing: border-box;
@@ -201,4 +205,48 @@ body {
 #myRange {
     width: 100%;
     margin: auto;
+}
+input[type=number] {
+    -moz-appearance: textfield;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.PosInput {
+    margin: auto;
+    width: fit-content;
+    text-align: center;
+
+}
+.position {
+    display: grid;
+    grid-template-columns: 33.33% 33.33% 33.33%;
+    place-items: center;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.PosInput .X {
+    grid-column: 1;
+}
+.PosInput .Y {
+    grid-column: 2;
+}
+.PosInput .Z {
+    grid-column: 3;
+}
+.PosInput input{
+    width: 50%;
+    margin: auto;
+    padding: 5px;
+    text-align: right;
+    background-color: #272727;
+    border-radius: 5px;
+    border-style:groove;
+    border-width: 1px;
+    border-color: black;
+    color: gray;
+    outline: none;
 }
