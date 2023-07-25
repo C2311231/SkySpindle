@@ -97,6 +97,9 @@ body {
     border-radius: 5px;
     padding: 5px;
 }
+.JogBtn:active {
+    background-color: black;
+}
 
 @media (min-width:751px) and (max-width: 1900px) {
     #columnsm {
@@ -144,3 +147,33 @@ body {
     }
 }
 
+.elementContent {
+    display: flex;
+}
+
+.homeBtn {
+    background-color: orange;
+    border-radius: 5px;
+    padding: 0px;
+    box-sizing:content-box;
+    margin: 0;
+    width: 31%;
+}
+#homeAllBtn {
+    border-radius: 5px, 0px, 0px, 0px !important;
+    width: 48%;
+}
+#homeXYBtn {
+    border-radius: 0px, 5px, 0px, 0px !important;
+    width: 48%;
+}
+
+.homing {
+    margin: auto;
+    width: 50%;
+    display: block;
+    padding: 0;
+}
+.homeBtn:active {
+    background-color: #121212;
+}
