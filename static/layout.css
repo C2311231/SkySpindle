@@ -155,8 +155,10 @@ body {
     background-color: orange;
     border-radius: 5px;
     padding: 5px;
-    box-sizing:border-box;
-    width: 100%;
+    box-sizing: border-box;
+    width: auto;
+    border: None;
+    margin: 3px;
 }
 
 .homing {
