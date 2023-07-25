@@ -47,11 +47,12 @@ body {
 }
 
 .JogControl {
-    width: 50%;
+    /* width: 50%; */
     position: relative;
     padding: 0;
     max-width: 200px;
-    aspect-ratio: 1/1
+    aspect-ratio: 1/1;
+    grid-column: 1;
     
 }
 .JogBtnL {
@@ -148,7 +149,7 @@ body {
 }
 
 .elementContent {
-    display: flex;
+    display: grid;
 }
 
 .homeBtn {
@@ -159,14 +160,16 @@ body {
     width: auto;
     border: None;
     margin: 3px;
+    color: white;
 }
 
 .homing {
     margin: auto;
-    width: 50%;
+    /* width: 50%; */
     display: grid;
     padding: 0;
     grid-template-columns: 100%;
+    grid-column: 2;
 }
 .homeBtn:active {
     background-color: #121212;
@@ -184,4 +187,18 @@ body {
 }
 #hXY{
     border-radius: 0px 5px 0px 0px !important;
+}
+.controlSection {
+    width: 100%;
+    display: grid;
+}
+
+.slidecontainer {
+    width: 80%;
+    margin: auto;
+    padding: 5px;
+}
+#myRange {
+    width: 100%;
+    margin: auto;
 }
