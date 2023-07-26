@@ -81,7 +81,7 @@
         <div class="JogIncrements">
             <span>Distance (mm): <input step="0.01" type="number" value="0.00" id="JogDisLabel"></span>
             <div class="slidecontainer">
-                <input type="range" min="1" max="50" value="0" step="1" class="slider" id="Jogdistance">
+                <input type="range" min="1" max="50" value="19" step="1" class="slider" id="Jogdistance">
             </div>
         </div>
         <div class="FeedIncrements">
@@ -97,6 +97,7 @@
         var Feed = document.getElementById("JogFeed");
         var FeedLabel = document.getElementById("JogFeedLabel");
         FeedLabel.value = Feed.value;
+        JogDis.value = 10;
         Jogslider.oninput = function () {
             if (this.value < 10)
                 JogDis.value = Math.round((this.value * 0.1) * 10) / 10;
