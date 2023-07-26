@@ -1,0 +1,114 @@
+<div class="element">
+    <div class="elementTitle">
+        <span>
+            <h3>Jog Control</h3>
+        </span>
+    </div>
+    <div class="elementContent">
+        <div class="position">
+            <div class="PosInput X">
+                <label>X</label>
+                <input step="0.01" type="number" value="0.00">
+            </div>
+            <div class="PosInput Y">
+                <label>Y</label>
+                <input step="0.01" type="number" value="0.00">
+            </div>
+            <div class="PosInput Z">
+                <label>Z</label>
+                <input step="0.01" type="number" value="0.00">
+            </div>
+        </div>
+        <div class="controlSection">
+            <div class="JogControl">
+                <button class="JogBtn JogBtnL">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white"
+                        class="bi bi-arrow-left" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z" />
+                    </svg>
+                </button>
+                <button class="JogBtn JogBtnR">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white"
+                        class="bi bi-arrow-right" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
+                    </svg>
+                </button>
+                <button class="JogBtn JogBtnU">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white"
+                        class="bi bi-arrow-up" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" />
+                    </svg>
+                </button>
+                <button class="JogBtn JogBtnD">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white"
+                        class="bi bi-arrow-down" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z" />
+                    </svg>
+                </button>
+                <button class="JogBtn JogBtnUp">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white"
+                        class="bi bi-arrow-up" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" />
+                    </svg>
+                </button>
+                <button class="JogBtn JogBtnDown">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white"
+                        class="bi bi-arrow-down" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="homing">
+                <div class="homingmulti">
+                    <button class="homeBtn hAll"><b>Home All</b></button>
+                    <button class="homeBtn hXY"><b>Home XY</b></button>
+                </div>
+
+                <div class="homingsingle">
+                    <button class="homeBtn homeXBtn"><b>X</b></button>
+                    <button class="homeBtn homeYBtn"><b>Y</b></button>
+                    <button class="homeBtn homeZBtn"><b>Z</b></button>
+                </div>
+            </div>
+        </div>
+        <div class="JogIncrements">
+            <span>Distance (mm): <input step="0.01" type="number" value="0.00" id="JogDisLabel"></span>
+            <div class="slidecontainer">
+                <input type="range" min="1" max="50" value="0" step="1" class="slider" id="Jogdistance">
+            </div>
+        </div>
+        <div class="FeedIncrements">
+            <span>Feed (%): <input step="0.01" type="number" value="0.00" id="JogFeedLabel"></span>
+            <div class="slidecontainer">
+                <input type="range" min="1" max="200" value="100" step="1" class="slider" id="JogFeed">
+            </div>
+        </div>
+    </div>
+    <script>
+        var Jogslider = document.getElementById("Jogdistance");
+        var JogDis = document.getElementById("JogDisLabel");
+        var Feed = document.getElementById("JogFeed");
+        var FeedLabel = document.getElementById("JogFeedLabel");
+        FeedLabel.value = Feed.value;
+        Jogslider.oninput = function () {
+            if (this.value < 10)
+                JogDis.value = Math.round((this.value * 0.1) * 10) / 10;
+            else if (this.value < 20)
+                JogDis.value = Math.round((this.value - 9) * 10) / 10;
+            else if (this.value < 24)
+                JogDis.value = Math.round((10 + (this.value - 19) * 5) * 10) / 10;
+            else if (this.value < 51)
+                JogDis.value = Math.round((30 + (this.value - 23) * 10) * 10) / 10;
+        } 
+        Feed.oninput = function () {
+            FeedLabel.value = this.value;
+        }
+    </script>
+</div>
