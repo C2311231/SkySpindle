@@ -263,6 +263,10 @@ input::-webkit-inner-spin-button {
 .inputcommand {
    resize: none;
    margin: 10px;
+   color: white;
+   background-color: #121212;
+   border-radius: 5px;
+   border-style: groove;
 }
 .commandInput {
     width: 95%;
@@ -270,4 +274,32 @@ input::-webkit-inner-spin-button {
     grid-template-columns: 80% 20%;
     margin: auto;
     margin-top: 5px;
+}
+.SubmitBtn {
+    color: gray;
+}
+.console {
+    height: 50vh;
+}
+.Consolelist {
+    display: grid;
+    margin: 5px;
+    grid-template-columns: 100%;
+}
+.consoleitem {
+    border: #121212;
+    border-bottom: gray;
+    border-top: gray;
+    border-style: groove;
+    height: 30px;
+
+}
+.user {
+    color: blue;
+}
+.recive, .systemsent {
+    color: gray;
+}
+.consoleitem h5 {
+    margin: auto;
 }
