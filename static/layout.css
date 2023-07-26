@@ -47,7 +47,6 @@ body {
 }
 
 .JogControl {
-    /* width: 50%; */
     position: relative;
     padding: 0;
     max-width: 200px;
@@ -93,7 +92,7 @@ body {
     left: 80%;
     transform: translate(0, -50%);
 }
-.JogBtn {
+.JogBtn, button {
     background-color: #272727;
     border-radius: 5px;
     padding: 5px;
@@ -102,7 +101,7 @@ body {
     outline: none;
     border-style: groove;
 }
-.JogBtn:active {
+.JogBtn:active, button:active{
     background-color: black;
 }
 
@@ -260,4 +259,15 @@ input::-webkit-inner-spin-button {
 .slider {
     width: 100%;
     margin: auto;
+}
+.inputcommand {
+   resize: none;
+   margin: 10px;
+}
+.commandInput {
+    width: 95%;
+    display: grid;
+    grid-template-columns: 80% 20%;
+    margin: auto;
+    margin-top: 5px;
 }
