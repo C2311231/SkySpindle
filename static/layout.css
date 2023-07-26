@@ -202,10 +202,7 @@ body {
     margin: auto;
     padding: 5px;
 }
-#myRange {
-    width: 100%;
-    margin: auto;
-}
+
 input[type=number] {
     -moz-appearance: textfield;
 }
@@ -237,7 +234,7 @@ input::-webkit-inner-spin-button {
 .PosInput .Z {
     grid-column: 3;
 }
-.PosInput input{
+.PosInput input, span input{
     width: 50%;
     margin: auto;
     padding: 5px;
@@ -249,4 +246,18 @@ input::-webkit-inner-spin-button {
     border-color: black;
     color: gray;
     outline: none;
+}
+
+#JogDisLabel, #JogFeedLabel {
+    margin-right: 15px;
+    float: right;
+}
+
+.JogIncrements span, .FeedIncrements span {
+    margin: 15px;
+
+}
+.slider {
+    width: 100%;
+    margin: auto;
 }
