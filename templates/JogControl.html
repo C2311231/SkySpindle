@@ -64,30 +64,40 @@
                     </svg>
                 </button>
             </div>
-
-            <div class="homing">
-                <div class="homingmulti">
-                    <button class="homeBtn hAll"><b>Home All</b></button>
-                    <button class="homeBtn hXY"><b>Home XY</b></button>
+                <div class="homing">
+                    <div class="homingmulti">
+                        <button class="homeBtn hAll"><b>Home All</b></button>
+                        <button class="homeBtn hXY"><b>Home XY</b></button>
+                    </div>
+    
+                    <div class="homingsingle">
+                        <button class="homeBtn homeXBtn"><b>X</b></button>
+                        <button class="homeBtn homeYBtn"><b>Y</b></button>
+                        <button class="homeBtn homeZBtn"><b>Z</b></button>
+                    </div>
+                </div>
+                <div class="spindleToggle">
+                    <button class="homeBtn"><b>Spindle On</b></button>
+                    <button class="homeBtn"><b>Spindle Off</b></button>
                 </div>
 
-                <div class="homingsingle">
-                    <button class="homeBtn homeXBtn"><b>X</b></button>
-                    <button class="homeBtn homeYBtn"><b>Y</b></button>
-                    <button class="homeBtn homeZBtn"><b>Z</b></button>
-                </div>
-            </div>
         </div>
-        <div class="JogIncrements">
+        <div class="JogSlider">
             <span>Distance (mm): <input step="0.01" type="number" value="0.00" id="JogDisLabel"></span>
             <div class="slidecontainer">
                 <input type="range" min="1" max="50" value="19" step="1" class="slider" id="Jogdistance">
             </div>
         </div>
-        <div class="FeedIncrements">
-            <span>Feed (%): <input step="0.01" type="number" value="0.00" id="JogFeedLabel"></span>
+        <div class="JogSlider">
+            <span>Feed (%): <input step="1" type="number" value="100" id="JogFeedLabel"></span>
             <div class="slidecontainer">
                 <input type="range" min="1" max="200" value="100" step="1" class="slider" id="JogFeed">
+            </div>
+        </div>
+        <div class="JogSlider">
+            <span>Spindle (%): <input step="1" type="number" value="100" id="JogSpindleLabel"></span>
+            <div class="slidecontainer">
+                <input type="range" min="1" max="200" value="100" step="1" class="slider" id="JogSpindle">
             </div>
         </div>
     </div>
@@ -96,6 +106,9 @@
         var JogDis = document.getElementById("JogDisLabel");
         var Feed = document.getElementById("JogFeed");
         var FeedLabel = document.getElementById("JogFeedLabel");
+        var Spindle = document.getElementById("JogSpindle");
+        var SpindleLabel = document.getElementById("JogSpindleLabel");
+        FeedLabel.value = Feed.value;
         FeedLabel.value = Feed.value;
         JogDis.value = 10;
         Jogslider.oninput = function () {
@@ -110,6 +123,9 @@
         } 
         Feed.oninput = function () {
             FeedLabel.value = this.value;
+        }
+        Spindle.oninput = function () {
+            SpindleLabel.value = this.value;
         }
     </script>
 </div>
