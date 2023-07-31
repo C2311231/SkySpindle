@@ -327,6 +327,8 @@ input::-webkit-inner-spin-button {
 }
 hr {
     width: 90%;
+    max-height: 1px;
+
 }
 
 .spindleToggle {
@@ -339,8 +341,10 @@ hr {
 .list {
     display: grid;
     grid-template-columns: 100%;
-    max-height: 30vh;
+    height: 30vh;
     overflow: auto;
+    border-style: hidden;
+    grid-template-rows: auto 1fr;
 }
 
 .listItem {
@@ -354,3 +358,4 @@ hr {
     float: right;
     margin-right: 50px;
 }
+

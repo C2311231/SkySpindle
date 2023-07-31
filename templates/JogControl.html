@@ -105,31 +105,4 @@
         </div>
 
     </div>
-    <script>
-        var Jogslider = document.getElementById("Jogdistance");
-        var JogDis = document.getElementById("JogDisLabel");
-        var Feed = document.getElementById("JogFeed");
-        var FeedLabel = document.getElementById("JogFeedLabel");
-        var Spindle = document.getElementById("JogSpindle");
-        var SpindleLabel = document.getElementById("JogSpindleLabel");
-        FeedLabel.value = Feed.value;
-        FeedLabel.value = Feed.value;
-        JogDis.value = 10;
-        Jogslider.oninput = function () {
-            if (this.value < 10)
-                JogDis.value = Math.round((this.value * 0.1) * 10) / 10;
-            else if (this.value < 20)
-                JogDis.value = Math.round((this.value - 9) * 10) / 10;
-            else if (this.value < 24)
-                JogDis.value = Math.round((10 + (this.value - 19) * 5) * 10) / 10;
-            else if (this.value < 51)
-                JogDis.value = Math.round((30 + (this.value - 23) * 10) * 10) / 10;
-        }
-        Feed.oninput = function () {
-            FeedLabel.value = this.value;
-        }
-        Spindle.oninput = function () {
-            SpindleLabel.value = this.value;
-        }
-    </script>
 </div>
