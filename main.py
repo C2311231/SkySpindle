@@ -1,5 +1,5 @@
 import grblCom
-import time
-import Web
 
- emit('my response', data, broadcast=True)
+
+GRBL = grblCom.GRBLConection('COM5', 115200)
+print(GRBL.GetGRBLSettings())

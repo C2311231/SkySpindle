@@ -36,6 +36,9 @@ Spindle.oninput = function () {
 
 // Receive data handlers
 
+var Xpos = document.getElementById('Xpos');
+var Ypos = document.getElementById('Ypos');
+var Zpos = document.getElementById('Zpos');
 
 var machineAccelerationX = document.getElementById('machineAccelerationX');
 var machineAccelerationY = document.getElementById('machineAccelerationY');
@@ -56,9 +59,11 @@ window.socket.on('connect', function () {
     console.log('I\'m connected!');
 });
 
-// window.socket.on('position', function (data) {
-//     data.
-// });
+window.socket.on('position', function (data) {
+    Xpos.value = data[0]
+    Ypos.value = data[1]
+    Zpos.value = data[2]
+});
 // window.socket.on('settings', function (data) {
 //     data.
 // });
