@@ -1,7 +1,7 @@
 import serial
 import serial.tools.list_ports
 import time
-
+import datetime
 def getUSBPorts():
     comPorts = serial.tools.list_ports.comports()
     ports = []
@@ -27,14 +27,16 @@ class GRBLConection():
         self.accessoryState = None
 
         
-    def SendCommand(self, command):
+    def SendCommand(self, command, socketio, htmlclass):
         self.connection.write(str.encode(f"{command}\n"))
-        return self.connection.read_until(expected=b'ok\r\n').decode('utf-8')
+        socketio.emit('console', {"timestamp": datetime.datetime.now().strftime("%H:%M:%S"), 'command': command, 'class': htmlclass})
+        response = self.connection.read_until(expected=b'ok\r\n').decode('utf-8')
+        socketio.emit('console', {"timestamp": datetime.datetime.now().strftime("%H:%M:%S"), 'command': response, 'class': 'recive'})
+        return response
         
-    def GetGRBLSettings(self):
-        self.settings = self.SendCommand('$$')
+    def GetGRBLSettings(self, socketio):
+        self.settings = self.SendCommand('$$', socketio, 'systemsent')
         self.settings = self.settings.replace('\r', '').replace('ok\n', '') # Converts to a string then removes \r and confirmation from responses 
-        self.prfloatSettings = self.settings
         self.settings = [i for i in self.settings.split('\n') if i]       # Removes Empty Strings from list after seperating newlines to a list (Due to the final \n at the end of the list it creates a empty string)
         
         # Convert list to dictionary
@@ -42,9 +44,9 @@ class GRBLConection():
         self.settings = dict(self.settings)   # Convert to a dictionary
         return self.settings
     
-    def StatusReport(self):
+    def StatusReport(self, socketio):
 
-        response = self.SendCommand('?').replace('<', '').replace('>\r\n', '').replace('ok\r\n', '').split('|')
+        response = self.SendCommand('?', socketio, 'systemsent').replace('<', '').replace('>\r\n', '').replace('ok\r\n', '').split('|')
         itemDict = {}
         for item in response:
             key_value_pair  = item.split(':')
@@ -100,6 +102,6 @@ class GRBLConection():
         itemDict['RealSpindle'] = self.RealSpindle
         return itemDict
 
-    def Jog(self, disX, disY, disZ, feedrate):
-        junk = self.SendCommand(f'$J=G91 G21 X{disX} Y{disY} Z{disZ} F{feedrate}') 
+    def Jog(self, socketio, disX, disY, disZ, feedrate):
+        junk = self.SendCommand(f'$J=G91 G21 X{disX} Y{disY} Z{disZ} F{feedrate}', socketio, 'systemsent') 
         

@@ -68,12 +68,18 @@ window.socket.on('position', function (data) {
 //     data.
 // });
 window.socket.on('console', function (data) {
-    grblconsole.innerHTML = ```        
+    if (data.command != htmlEscape(data.command)){
+        return
+    }
+    if (data.command == '?' && data.class == 'systemsent'){
+        return
+    }
+    grblconsole.innerHTML = `        
     <div class="consoleitem ${data.class}">
-        <h5>${data.timestamp} -- ${data.command}</h5>
+        <h5>${data.timestamp} -- ${htmlEscape(data.command)}</h5>
     </div>
     <hr>
-    ``` + grblconsole.innerHTML;
+    ` + grblconsole.innerHTML;
 });
 window.socket.on('machine', function (data) {
     machineAccelerationX.value = data.machineAccelerationX;
@@ -110,6 +116,8 @@ var JogUp = document.getElementsByClassName('JogBtnU');
 var JogDown = document.getElementsByClassName('JogBtnD');
 var JogVUp = document.getElementsByClassName('JogBtnUp');
 var JogVDown = document.getElementsByClassName('JogBtnDown');
+
+
 for (var i = 0; i < JogLeft.length; i++) {
     JogLeft[i].addEventListener("click", SendJogLeft);
 }
@@ -153,3 +161,33 @@ function SendJogVerticalUp(){
 function SendJogVerticalDown(){
     window.socket.emit('Jog', {x: 0, y: 0, z: -(JogDis.value)});
 };
+
+var SendConsole = document.getElementById('consolesend')
+var ConsoleInput = document.getElementById('consoleinput')
+
+SendConsole.addEventListener("click", SendConsoleInput);
+
+function SendConsoleInput(){
+    window.socket.emit('sendconsole', ConsoleInput.value);
+    ConsoleInput.value = '';
+}
+
+function htmlEscape(str) {
+    return str.replace(/[&<>"']/g, function(match) {
+      switch (match) {
+        case '&':
+          return '&amp;';
+        case '<':
+          return '&lt;';
+        case '>':
+          return '&gt;';
+        case '"':
+          return '&quot;';
+        case "'":
+          return '&apos;';
+        default:
+          return match;
+      }
+    });
+  }
+  

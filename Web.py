@@ -19,12 +19,16 @@ def home():
 
 @socketio.on('Jog')
 def fil(data):
-    GRBL.Jog(data['x'], data['y'], data['z'], 1000)
+    GRBL.Jog(socketio, data['x'], data['y'], data['z'], 1000)
     
+@socketio.on('sendconsole')
+def fil(data):
+    print(data)
+    GRBL.SendCommand(data, socketio, 'user')
     
 @scheduler.task('interval', id='GetPos', seconds=0.3, max_instances=5)
 def SendPositionData():
-    GRBL.StatusReport()
+    GRBL.StatusReport(socketio)
     socketio.emit('position', GRBL.Mpos)
     
     
