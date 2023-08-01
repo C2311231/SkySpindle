@@ -2,6 +2,7 @@ import serial
 import serial.tools.list_ports
 import time
 import datetime
+import threading
 def getUSBPorts():
     comPorts = serial.tools.list_ports.comports()
     ports = []
@@ -132,3 +133,17 @@ class GRBLConection():
             for i in range(0, iterations):
                 self.SendCommand(b'\x9D', socketio, 'systemsent')
                 time.sleep(0.02)
+                
+    def Async(self, socketio, buffer):
+        while True:
+            if buffer != []:
+                for command in buffer:
+                    if command[0] == 'adjustSpindle':
+                        self.adjustSpindle(socketio, command[1])
+                    elif command[0] == 'SendCommand':
+                        self.SendCommand(command[1], socketio, command[2])
+                    elif command[0] == 'Jog':
+                        self.Jog(socketio, command[1], command[2], command[3], command[4])
+                    elif command[0] == 'StatusReport':
+                        self.StatusReport(socketio)
+                    buffer.remove(command)
