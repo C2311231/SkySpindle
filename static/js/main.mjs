@@ -9,7 +9,7 @@ var Jogslider = document.getElementById("Jogdistance");
 var JogDis = document.getElementById("JogDisLabel");
 var Feed = document.getElementById("JogFeed");
 var FeedLabel = document.getElementById("JogFeedLabel");
-var Spindle = document.getElementById("JogSpindle");
+var SpindleOveride = document.getElementById("JogSpindle");
 var SpindleLabel = document.getElementById("JogSpindleLabel");
 FeedLabel.value = Feed.value;
 FeedLabel.value = Feed.value;
@@ -27,11 +27,15 @@ Jogslider.oninput = function () {
 Feed.oninput = function () {
     FeedLabel.value = this.value;
 }
-Spindle.oninput = function () {
+SpindleOveride.oninput = function () {
     SpindleLabel.value = this.value;
+    socket.emit('SpindleOveride', this.value);
 }
 
-
+SpindleLabel.oninput = function () {
+    SpindleOveride.value = this.value;
+    socket.emit('SpindleOveride', this.value);
+}
 
 
 // Receive data handlers
@@ -68,10 +72,7 @@ window.socket.on('position', function (data) {
 //     data.
 // });
 window.socket.on('console', function (data) {
-    if (data.command != htmlEscape(data.command)){
-        return
-    }
-    if (data.command == '?' && data.class == 'systemsent'){
+    if (data.class == 'systemquery'){
         return
     }
     grblconsole.innerHTML = `        
@@ -171,8 +172,32 @@ function SendConsoleInput(){
     window.socket.emit('sendconsole', ConsoleInput.value);
     ConsoleInput.value = '';
 }
+//Homing Commands
 
+var HomeAll = document.getElementById('HomeAll');
+var HomeXY = document.getElementById('HomeXY');
+var HomeX = document.getElementById('HomeX');
+var HomeY = document.getElementById('HomeY');
+var HomeZ = document.getElementById('HomeZ');
+
+HomeAll.addEventListener('click', function(){window.socket.emit('home', 'XYZ')});
+HomeXY.addEventListener('click', function(){window.socket.emit('home', 'XY')});
+HomeX.addEventListener('click', function(){window.socket.emit('home', 'X')});
+HomeY.addEventListener('click', function(){window.socket.emit('home', 'Y')});
+HomeZ.addEventListener('click', function(){window.socket.emit('home', 'Z')});
+
+//Spindle Commands
+
+var SpindleOn = document.getElementById('SpindleOn');
+var SpindleOff = document.getElementById('SpindleOff');
+var SpindleSpeed = document.getElementById('Spindle');
+
+SpindleOff.addEventListener('click', function(){window.socket.emit('spindle', '0')});
+SpindleOn.addEventListener('click', function(){window.socket.emit('spindle', SpindleSpeed.value)});
+
+// Extra Functions
 function htmlEscape(str) {
+    str = String(str);
     return str.replace(/[&<>"']/g, function(match) {
       switch (match) {
         case '&':

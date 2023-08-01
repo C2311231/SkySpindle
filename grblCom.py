@@ -28,10 +28,17 @@ class GRBLConection():
 
         
     def SendCommand(self, command, socketio, htmlclass):
-        self.connection.write(str.encode(f"{command}\n"))
+        if isinstance(command, bytes):
+            self.connection.write(command)
+            self.connection.write(str.encode('\n'))
+        else:
+            self.connection.write(str.encode(f"{command}\n"))
         socketio.emit('console', {"timestamp": datetime.datetime.now().strftime("%H:%M:%S"), 'command': command, 'class': htmlclass})
         response = self.connection.read_until(expected=b'ok\r\n').decode('utf-8')
-        socketio.emit('console', {"timestamp": datetime.datetime.now().strftime("%H:%M:%S"), 'command': response, 'class': 'recive'})
+        if htmlclass == 'systemquery':
+            socketio.emit('console', {"timestamp": datetime.datetime.now().strftime("%H:%M:%S"), 'command': response, 'class': 'systemquery'})
+        else:
+            socketio.emit('console', {"timestamp": datetime.datetime.now().strftime("%H:%M:%S"), 'command': response, 'class': 'recive'})
         return response
         
     def GetGRBLSettings(self, socketio):
@@ -46,7 +53,7 @@ class GRBLConection():
     
     def StatusReport(self, socketio):
 
-        response = self.SendCommand('?', socketio, 'systemsent').replace('<', '').replace('>\r\n', '').replace('ok\r\n', '').split('|')
+        response = self.SendCommand('?', socketio, 'systemquery').replace('<', '').replace('>\r\n', '').replace('ok\r\n', '').split('|')
         itemDict = {}
         for item in response:
             key_value_pair  = item.split(':')
@@ -85,10 +92,10 @@ class GRBLConection():
                 self.LineNum = float(key_value_pair[1])
 
             elif key_value_pair[0] == 'Pn':
-                self.triggeredPins = key_value_pair[1].split('')
+                self.triggeredPins = list(key_value_pair[1])
             
             elif key_value_pair[0] == 'A':
-                self.accessoryState = key_value_pair[1].split('')
+                self.accessoryState = list(key_value_pair[1])
 
         itemDict['Status'] = self.status
         itemDict['SubStatus'] = self.subStatus
@@ -105,3 +112,23 @@ class GRBLConection():
     def Jog(self, socketio, disX, disY, disZ, feedrate):
         junk = self.SendCommand(f'$J=G91 G21 X{disX} Y{disY} Z{disZ} F{feedrate}', socketio, 'systemsent') 
         
+    def adjustSpindle(self, socketio, desired):
+        
+        self.StatusReport(socketio)
+        if desired == '100':
+            self.SendCommand(b'\x99', socketio, 'systemsent')
+        
+        elif str(self.Ov[2]) == desired:
+            return
+        
+        elif str(self.Ov[2]) < desired:
+            iterations = int(desired) - int(self.Ov[2])
+            for i in range(0, iterations):
+                self.SendCommand(b'\x9C', socketio, 'systemsent')
+                time.sleep(0.02)
+            
+        else:
+            iterations = int(self.Ov[2]) - int(desired)
+            for i in range(0, iterations):
+                self.SendCommand(b'\x9D', socketio, 'systemsent')
+                time.sleep(0.02)

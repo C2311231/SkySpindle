@@ -19,18 +19,39 @@ def home():
 
 @socketio.on('Jog')
 def fil(data):
+    scheduler.pause()
     GRBL.Jog(socketio, data['x'], data['y'], data['z'], 1000)
+    scheduler.resume()
     
 @socketio.on('sendconsole')
-def fil(data):
-    print(data)
+def fili(data):
+    scheduler.pause()
     GRBL.SendCommand(data, socketio, 'user')
+    scheduler.resume()
     
+@socketio.on('home')
+def file(data):
+    scheduler.pause()
+    GRBL.SendCommand(f'$H{data}', socketio, 'systemsent')
+    scheduler.resume()
+
+@socketio.on('spindle')
+def filr(data):
+    scheduler.pause()
+    GRBL.SendCommand(f'M03 S{data}', socketio, 'systemsent')
+    scheduler.resume()
+
 @scheduler.task('interval', id='GetPos', seconds=0.3, max_instances=5)
 def SendPositionData():
     GRBL.StatusReport(socketio)
     socketio.emit('position', GRBL.Mpos)
     
+@socketio.on('SpindleOveride')
+def filr(data):
+    scheduler.pause()
+    print(data)
+    GRBL.adjustSpindle(socketio, data)
+    scheduler.resume()
     
 if __name__ == "__main__":
     scheduler.pause()
