@@ -48,6 +48,13 @@ def SendPositionData():
 def filr(data):
     GRBL_COMMAND_BUFFER.append(['adjustSpindle', data])
     
+@socketio.on('FeedOveride')
+def filr(data):
+    GRBL_COMMAND_BUFFER.append(['adjustFeed', data])
+    
+@socketio.on('RapidOveride')
+def filr(data):
+    GRBL_COMMAND_BUFFER.append(['adjustRapid', data])
     
 if __name__ == "__main__":
     

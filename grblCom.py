@@ -139,17 +139,52 @@ class GRBLConection():
             for i in range(0, int(iterations%10)):
                 self.SendCommand(b'\x9D', socketio, 'systemsent')
                 time.sleep(0.02)
-                
+    def adjustFeed(self, socketio, desired):
+        self.StatusReport(socketio)
+        if desired == '100':
+            self.SendCommand(b'\x90', socketio, 'systemsent')
+        
+        elif str(self.Ov[0]) == desired:
+            return
+        
+        elif int(self.Ov[0]) < int(desired):
+            iterations = int(desired) - int(self.Ov[0])
+            for i in range(0, int(iterations/10)):
+                self.SendCommand(b'\x91', socketio, 'systemsent')
+                time.sleep(0.02)
+            for i in range(0, int(iterations%10)):
+                self.SendCommand(b'\x93', socketio, 'systemsent')
+                time.sleep(0.02)
+            
+        else:
+            iterations = int(self.Ov[0]) - int(desired)
+            for i in range(0, int(iterations/10)):
+                self.SendCommand(b'\x92', socketio, 'systemsent')
+                time.sleep(0.02)
+            for i in range(0, int(iterations%10)):
+                self.SendCommand(b'\x94', socketio, 'systemsent')
+                time.sleep(0.02)
+    def adjustRapid(self, socketio, value):
+        if value == '100':
+            self.SendCommand(b'\x95', socketio, 'systemsent')
+        elif value == '50':
+            self.SendCommand(b'\x96', socketio, 'systemsent')
+        else:
+            self.SendCommand(b'\x97', socketio, 'systemsent')
     def Async(self, socketio, buffer):
         while True:
             if buffer != []:
                 for command in buffer:
                     if command[0] == 'adjustSpindle':
                         self.adjustSpindle(socketio, command[1])
+                    elif command[0] == 'adjustFeed':
+                        self.adjustFeed(socketio, command[1])
                     elif command[0] == 'SendCommand':
                         self.SendCommand(command[1], socketio, command[2])
                     elif command[0] == 'Jog':
                         self.Jog(socketio, command[1], command[2], command[3], command[4])
                     elif command[0] == 'StatusReport':
                         self.StatusReport(socketio)
+                    elif command[0] == 'adjustRapid':
+                        self.adjustRapid(socketio, command[1])
                     buffer.remove(command)

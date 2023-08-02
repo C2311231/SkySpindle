@@ -11,8 +11,12 @@ var Feed = document.getElementById("JogFeed");
 var FeedLabel = document.getElementById("JogFeedLabel");
 var SpindleOveride = document.getElementById("JogSpindle");
 var SpindleLabel = document.getElementById("JogSpindleLabel");
+var RapidOveride = document.getElementById("JogRapid");
+var RapidOverideLabel = document.getElementById("JogRapidLabel");
 FeedLabel.value = Feed.value;
-FeedLabel.value = Feed.value;
+SpindleLabel.value = SpindleOveride.value;
+RapidOverideLabel.value = 100;
+RapidOveride.value = 3;
 JogDis.value = 10;
 Jogslider.oninput = function () {
     if (this.value < 10)
@@ -26,6 +30,12 @@ Jogslider.oninput = function () {
 }
 Feed.oninput = function () {
     FeedLabel.value = this.value;
+    socket.emit('FeedOveride', this.value);
+}
+
+FeedLabel.oninput = function () {
+    Feed.value = this.value;
+    socket.emit('FeedOveride', this.value);
 }
 SpindleOveride.oninput = function () {
     SpindleLabel.value = this.value;
@@ -36,6 +46,42 @@ SpindleLabel.oninput = function () {
     SpindleOveride.value = this.value;
     socket.emit('SpindleOveride', this.value);
 }
+
+RapidOveride.oninput = function () {
+    if (this.value == 1) {
+        RapidOverideLabel.value = 25;
+        socket.emit('RapidOveride', RapidOverideLabel.value);
+    }
+
+    else if (this.value == 2) {
+        RapidOverideLabel.value = 50;
+        socket.emit('RapidOveride', RapidOverideLabel.value);
+    }
+    else {
+        RapidOverideLabel.value = 100;
+        socket.emit('RapidOveride', RapidOverideLabel.value);
+    }
+}
+var timeoutId;
+
+RapidOverideLabel.oninput = function () {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(function () {
+        if (RapidOverideLabel.value <= 37) {
+            RapidOverideLabel.value = 25;
+            RapidOveride.value = 1;
+        } else if (RapidOverideLabel.value < 75) {
+            RapidOverideLabel.value = 50;
+            RapidOveride.value = 2;
+        } else {
+            RapidOverideLabel.value = 100;
+            RapidOveride.value = 3;
+        }
+    }, 500);
+};
+
+
+
 
 
 // Receive data handlers
@@ -72,7 +118,7 @@ window.socket.on('position', function (data) {
 //     data.
 // });
 window.socket.on('console', function (data) {
-    if (data.class == 'systemquery'){
+    if (data.class == 'systemquery') {
         return
     }
     grblconsole.innerHTML = `        
@@ -139,28 +185,28 @@ for (var i = 0; i < JogVDown.length; i++) {
 }
 
 //Send Jog command
-function SendJogLeft(){
-    window.socket.emit('Jog', {x: -(JogDis.value), y: 0, z: 0});
+function SendJogLeft() {
+    window.socket.emit('Jog', { x: -(JogDis.value), y: 0, z: 0 });
 };
 
-function SendJogRight(){
-    window.socket.emit('Jog', {x: JogDis.value, y: 0, z: 0});
+function SendJogRight() {
+    window.socket.emit('Jog', { x: JogDis.value, y: 0, z: 0 });
 };
 
-function SendJogUp(){
-    window.socket.emit('Jog', {x: 0, y: JogDis.value, z: 0});
+function SendJogUp() {
+    window.socket.emit('Jog', { x: 0, y: JogDis.value, z: 0 });
 };
 
-function SendJogDown(){
-    window.socket.emit('Jog', {x: 0, y: -(JogDis.value), z: 0});
+function SendJogDown() {
+    window.socket.emit('Jog', { x: 0, y: -(JogDis.value), z: 0 });
 };
 
-function SendJogVerticalUp(){
-    window.socket.emit('Jog', {x: 0, y: 0, z: JogDis.value});
+function SendJogVerticalUp() {
+    window.socket.emit('Jog', { x: 0, y: 0, z: JogDis.value });
 };
 
-function SendJogVerticalDown(){
-    window.socket.emit('Jog', {x: 0, y: 0, z: -(JogDis.value)});
+function SendJogVerticalDown() {
+    window.socket.emit('Jog', { x: 0, y: 0, z: -(JogDis.value) });
 };
 
 var SendConsole = document.getElementById('consolesend')
@@ -168,7 +214,7 @@ var ConsoleInput = document.getElementById('consoleinput')
 
 SendConsole.addEventListener("click", SendConsoleInput);
 
-function SendConsoleInput(){
+function SendConsoleInput() {
     window.socket.emit('sendconsole', ConsoleInput.value);
     ConsoleInput.value = '';
 }
@@ -180,11 +226,11 @@ var HomeX = document.getElementById('HomeX');
 var HomeY = document.getElementById('HomeY');
 var HomeZ = document.getElementById('HomeZ');
 
-HomeAll.addEventListener('click', function(){window.socket.emit('home', 'XYZ')});
-HomeXY.addEventListener('click', function(){window.socket.emit('home', 'XY')});
-HomeX.addEventListener('click', function(){window.socket.emit('home', 'X')});
-HomeY.addEventListener('click', function(){window.socket.emit('home', 'Y')});
-HomeZ.addEventListener('click', function(){window.socket.emit('home', 'Z')});
+HomeAll.addEventListener('click', function () { window.socket.emit('home', 'XYZ') });
+HomeXY.addEventListener('click', function () { window.socket.emit('home', 'XY') });
+HomeX.addEventListener('click', function () { window.socket.emit('home', 'X') });
+HomeY.addEventListener('click', function () { window.socket.emit('home', 'Y') });
+HomeZ.addEventListener('click', function () { window.socket.emit('home', 'Z') });
 
 //Spindle Commands
 
@@ -192,27 +238,26 @@ var SpindleOn = document.getElementById('SpindleOn');
 var SpindleOff = document.getElementById('SpindleOff');
 var SpindleSpeed = document.getElementById('Spindle');
 
-SpindleOff.addEventListener('click', function(){window.socket.emit('spindle', '0')});
-SpindleOn.addEventListener('click', function(){window.socket.emit('spindle', SpindleSpeed.value)});
+SpindleOff.addEventListener('click', function () { window.socket.emit('spindle', '0') });
+SpindleOn.addEventListener('click', function () { window.socket.emit('spindle', SpindleSpeed.value) });
 
 // Extra Functions
 function htmlEscape(str) {
     str = String(str);
-    return str.replace(/[&<>"']/g, function(match) {
-      switch (match) {
-        case '&':
-          return '&amp;';
-        case '<':
-          return '&lt;';
-        case '>':
-          return '&gt;';
-        case '"':
-          return '&quot;';
-        case "'":
-          return '&apos;';
-        default:
-          return match;
-      }
+    return str.replace(/[&<>"']/g, function (match) {
+        switch (match) {
+            case '&':
+                return '&amp;';
+            case '<':
+                return '&lt;';
+            case '>':
+                return '&gt;';
+            case '"':
+                return '&quot;';
+            case "'":
+                return '&apos;';
+            default:
+                return match;
+        }
     });
-  }
-  
+}

@@ -249,7 +249,7 @@ input::-webkit-inner-spin-button {
     outline: none;
 }
 
-#JogDisLabel, #JogFeedLabel, #JogSpindleLabel {
+.JogSliderLabel{
     margin-right: 15px;
     float: right;
 }
