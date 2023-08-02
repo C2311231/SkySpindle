@@ -10,7 +10,6 @@ def getUSBPorts():
         ports.append(port.device)
     return ports
 
-
 class GRBLConection():
     
     def __init__(self, port, baudrate):
@@ -172,9 +171,12 @@ class GRBLConection():
         else:
             self.SendCommand(b'\x97', socketio, 'systemsent')
     def Async(self, socketio, buffer):
-        while True:
+        self.running=True
+        while self.running:
             if buffer != []:
-                for command in buffer:
+                print('loop')
+                commands = buffer
+                for command in commands:
                     if command[0] == 'adjustSpindle':
                         self.adjustSpindle(socketio, command[1])
                     elif command[0] == 'adjustFeed':
@@ -188,3 +190,5 @@ class GRBLConection():
                     elif command[0] == 'adjustRapid':
                         self.adjustRapid(socketio, command[1])
                     buffer.remove(command)
+    def stop_thread(self):
+        self.running=False

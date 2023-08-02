@@ -1,18 +1,69 @@
 import '/static/js/SocketIo.js';
 
 window.socket = io()
+var timeoutId;
 
+
+
+//Vars
+var Jogslider = document.getElementById("Jogdistance");
+var JogDis = document.getElementById("JogDisLabel");
+
+var Feed = document.getElementById("JogFeed");
+var FeedLabel = document.getElementById("JogFeedLabel");
+
+var SpindleOveride = document.getElementById("JogSpindle");
+var SpindleLabel = document.getElementById("JogSpindleLabel");
+
+var RapidOveride = document.getElementById("JogRapid");
+var RapidOverideLabel = document.getElementById("JogRapidLabel");
+
+var Disconect = document.getElementById('disconectBTN');
+var Connect = document.getElementById('connectBTN');
+var Port = document.getElementById('PortDropDown');
+var Portlabel = document.getElementById('portLabel');
+
+var Xpos = document.getElementById('Xpos');
+var Ypos = document.getElementById('Ypos');
+var Zpos = document.getElementById('Zpos');
+
+var machineAccelerationX = document.getElementById('machineAccelerationX');
+var machineAccelerationY = document.getElementById('machineAccelerationY');
+var machineAccelerationZ = document.getElementById('machineAccelerationZ');
+
+var machineMaxRateX = document.getElementById('machineMaxRateX');
+var machineMaxRateY = document.getElementById('machineMaxRateY');
+var machineMaxRateZ = document.getElementById('machineMaxRateZ');
+
+var Feedrate = document.getElementById('Feedrate');
+var Spindle = document.getElementById('Spindle');
+
+var operations = document.getElementById('operations');
+var grblconsole = document.getElementById('Consolelist');
+
+var HomeAll = document.getElementById('HomeAll');
+var HomeXY = document.getElementById('HomeXY');
+
+var HomeX = document.getElementById('HomeX');
+var HomeY = document.getElementById('HomeY');
+var HomeZ = document.getElementById('HomeZ');
+
+var JogLeft = document.getElementsByClassName('JogBtnL');
+var JogRight = document.getElementsByClassName('JogBtnR');
+var JogUp = document.getElementsByClassName('JogBtnU');
+var JogDown = document.getElementsByClassName('JogBtnD');
+var JogVUp = document.getElementsByClassName('JogBtnUp');
+var JogVDown = document.getElementsByClassName('JogBtnDown');
+
+var SpindleOn = document.getElementById('SpindleOn');
+var SpindleOff = document.getElementById('SpindleOff');
+var SpindleSpeed = document.getElementById('Spindle');
+
+var SendConsole = document.getElementById('consolesend')
+var ConsoleInput = document.getElementById('consoleinput')
 
 // Slider Handlers
 
-var Jogslider = document.getElementById("Jogdistance");
-var JogDis = document.getElementById("JogDisLabel");
-var Feed = document.getElementById("JogFeed");
-var FeedLabel = document.getElementById("JogFeedLabel");
-var SpindleOveride = document.getElementById("JogSpindle");
-var SpindleLabel = document.getElementById("JogSpindleLabel");
-var RapidOveride = document.getElementById("JogRapid");
-var RapidOverideLabel = document.getElementById("JogRapidLabel");
 FeedLabel.value = Feed.value;
 SpindleLabel.value = SpindleOveride.value;
 RapidOverideLabel.value = 100;
@@ -29,40 +80,63 @@ Jogslider.oninput = function () {
         JogDis.value = Math.round((30 + (this.value - 23) * 10) * 10) / 10;
 }
 Feed.oninput = function () {
-    FeedLabel.value = this.value;
-    socket.emit('FeedOveride', this.value);
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(function () {
+    FeedLabel.value = Feed.value;
+    window.socket.emit('FeedOveride', Feed.value);
+    }, 500)
 }
 
 FeedLabel.oninput = function () {
-    Feed.value = this.value;
-    socket.emit('FeedOveride', this.value);
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(function () {
+    if (FeedLabel.value > 200){
+        FeedLabel.value = 200;
+    }
+    if (FeedLabel.value < 1){
+        FeedLabel.value = 1;
+    }
+    Feed.value = FeedLabel.value;
+    window.socket.emit('FeedOveride', FeedLabel.value);
+    }, 500)
 }
 SpindleOveride.oninput = function () {
-    SpindleLabel.value = this.value;
-    socket.emit('SpindleOveride', this.value);
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(function () {
+    SpindleLabel.value = SpindleOveride.value;
+    window.socket.emit('SpindleOveride', SpindleOveride.value);
+    }, 500)
 }
 
 SpindleLabel.oninput = function () {
-    SpindleOveride.value = this.value;
-    socket.emit('SpindleOveride', this.value);
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(function () {
+    if (SpindleLabel.value > 200){
+        SpindleLabel.value = 200;
+    }
+    if (SpindleLabel.value < 1){
+        SpindleLabel.value = 1;
+    }
+    SpindleOveride.value = SpindleLabel.value;
+    window.socket.emit('SpindleOveride', SpindleLabel.value);
+    }, 500)
 }
 
 RapidOveride.oninput = function () {
     if (this.value == 1) {
         RapidOverideLabel.value = 25;
-        socket.emit('RapidOveride', RapidOverideLabel.value);
+        window.socket.emit('RapidOveride', RapidOverideLabel.value);
     }
 
     else if (this.value == 2) {
         RapidOverideLabel.value = 50;
-        socket.emit('RapidOveride', RapidOverideLabel.value);
+        window.socket.emit('RapidOveride', RapidOverideLabel.value);
     }
     else {
         RapidOverideLabel.value = 100;
-        socket.emit('RapidOveride', RapidOverideLabel.value);
+        window.socket.emit('RapidOveride', RapidOverideLabel.value);
     }
 }
-var timeoutId;
 
 RapidOverideLabel.oninput = function () {
     clearTimeout(timeoutId);
@@ -85,26 +159,6 @@ RapidOverideLabel.oninput = function () {
 
 
 // Receive data handlers
-
-var Xpos = document.getElementById('Xpos');
-var Ypos = document.getElementById('Ypos');
-var Zpos = document.getElementById('Zpos');
-
-var machineAccelerationX = document.getElementById('machineAccelerationX');
-var machineAccelerationY = document.getElementById('machineAccelerationY');
-var machineAccelerationZ = document.getElementById('machineAccelerationZ');
-
-var machineMaxRateX = document.getElementById('machineMaxRateX');
-var machineMaxRateY = document.getElementById('machineMaxRateY');
-var machineMaxRateZ = document.getElementById('machineMaxRateZ');
-
-var Feedrate = document.getElementById('Feedrate');
-var Spindle = document.getElementById('Spindle');
-
-var operations = document.getElementById('operations');
-var grblconsole = document.getElementById('Consolelist');
-
-
 window.socket.on('connect', function () {
     console.log('I\'m connected!');
 });
@@ -152,17 +206,17 @@ window.socket.on('operation', function (data) {
     </div >
     <hr>```;
 });
-
+window.socket.on('USBPorts', function (data) {
+    Port.innerHTML = '';
+    for (var i = 0; i < data.length; i++) {
+        Port.innerHTML += `<option value="${data[i]}">${data[i]}</option>`
+    }
+})
 
 // Send data
 
 
-var JogLeft = document.getElementsByClassName('JogBtnL');
-var JogRight = document.getElementsByClassName('JogBtnR');
-var JogUp = document.getElementsByClassName('JogBtnU');
-var JogDown = document.getElementsByClassName('JogBtnD');
-var JogVUp = document.getElementsByClassName('JogBtnUp');
-var JogVDown = document.getElementsByClassName('JogBtnDown');
+
 
 
 for (var i = 0; i < JogLeft.length; i++) {
@@ -209,8 +263,7 @@ function SendJogVerticalDown() {
     window.socket.emit('Jog', { x: 0, y: 0, z: -(JogDis.value) });
 };
 
-var SendConsole = document.getElementById('consolesend')
-var ConsoleInput = document.getElementById('consoleinput')
+
 
 SendConsole.addEventListener("click", SendConsoleInput);
 
@@ -220,12 +273,6 @@ function SendConsoleInput() {
 }
 //Homing Commands
 
-var HomeAll = document.getElementById('HomeAll');
-var HomeXY = document.getElementById('HomeXY');
-var HomeX = document.getElementById('HomeX');
-var HomeY = document.getElementById('HomeY');
-var HomeZ = document.getElementById('HomeZ');
-
 HomeAll.addEventListener('click', function () { window.socket.emit('home', 'XYZ') });
 HomeXY.addEventListener('click', function () { window.socket.emit('home', 'XY') });
 HomeX.addEventListener('click', function () { window.socket.emit('home', 'X') });
@@ -234,12 +281,34 @@ HomeZ.addEventListener('click', function () { window.socket.emit('home', 'Z') })
 
 //Spindle Commands
 
-var SpindleOn = document.getElementById('SpindleOn');
-var SpindleOff = document.getElementById('SpindleOff');
-var SpindleSpeed = document.getElementById('Spindle');
+
 
 SpindleOff.addEventListener('click', function () { window.socket.emit('spindle', '0') });
 SpindleOn.addEventListener('click', function () { window.socket.emit('spindle', SpindleSpeed.value) });
+
+//Connection Commands
+Connect.addEventListener('click', function () {
+    window.socket.emit('Connect', Port.value)
+    Connect.style.display = 'none';
+    Port.style.display = 'none';
+    Portlabel.style.display = 'none';
+    Disconect.style.display = 'inline';
+})
+Disconect.addEventListener('click', function () {
+    window.socket.emit('Disconnect')
+    Connect.style.display = 'inline';
+    Port.style.display = 'inline';
+    Disconect.style.display = 'none';
+})
+
+
+
+
+
+
+
+
+
 
 // Extra Functions
 function htmlEscape(str) {
