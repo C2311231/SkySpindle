@@ -67,7 +67,6 @@ def Connect(data):
     GRBLthread.start()
 @socketio.on('Disconnect')
 def Disconnect():
-    print('Disconnecting')
     GRBL.stop_thread()
     GRBLthread.join()
     GRBL.connection.close()

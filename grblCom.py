@@ -174,7 +174,6 @@ class GRBLConection():
         self.running=True
         while self.running:
             if buffer != []:
-                print('loop')
                 commands = buffer
                 for command in commands:
                     if command[0] == 'adjustSpindle':
