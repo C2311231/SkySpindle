@@ -7,7 +7,9 @@ import threading
 app = Flask(__name__)
 app.secret_key = 'key123'
 socketio = SocketIO(app)
-running = False
+global State
+State = 'Disconnected'
+
 
 scheduler = APScheduler()
 scheduler.init_app(app)
@@ -65,17 +67,22 @@ def Connect(data):
     scheduler.resume()
     GRBLthread = GRBLthread = threading.Thread(target=GRBL.Async, args=(socketio, GRBL_COMMAND_BUFFER), daemon=True)
     GRBLthread.start()
+    global State
+    State = 'Connected'
 @socketio.on('Disconnect')
 def Disconnect():
     GRBL.stop_thread()
     GRBLthread.join()
     GRBL.connection.close()
     scheduler.pause()
+    global State
+    State = 'Disconnected'
     
     
 @socketio.on('connect')
 def SendPorts(data):
     socketio.emit('USBPorts', grblCom.getUSBPorts())
+    socketio.emit('State', State)
 
 if __name__ == "__main__":
     scheduler.start()

@@ -80,6 +80,7 @@ class GRBLConection():
                 
             elif key_value_pair[0] == 'Ov':
                 self.Ov = list(map(float, key_value_pair[1].split(',')))
+                socketio.emit('Overides', self.Ov)
                 
             elif key_value_pair[0] == 'F':
                 self.RealFeed = float(key_value_pair[1])

@@ -163,6 +163,29 @@ window.socket.on('connect', function () {
     console.log('I\'m connected!');
 });
 
+window.socket.on('State', function (data) {
+    if (data == 'Disconnected'){
+        DisconnectUpdate();
+    }
+    else if (data == 'Connected') {
+        ConnectUpdate();
+    }
+});
+
+window.socket.on('Overides', function (data) {
+    Feed.value = data[0];
+    FeedLabel.value = data[0];
+    if (data[1]/25 == 4){
+        RapidOveride.value = 3;
+    }
+    else {
+        RapidOveride.value = data[1]/25;
+    }
+    RapidOverideLabel.value = data[1];
+    SpindleOveride.value = data[2];
+    SpindleLabel.value = data[2];
+});
+
 window.socket.on('position', function (data) {
     Xpos.value = data[0]
     Ypos.value = data[1]
@@ -289,21 +312,25 @@ SpindleOn.addEventListener('click', function () { window.socket.emit('spindle', 
 //Connection Commands
 Connect.addEventListener('click', function () {
     window.socket.emit('Connect', Port.value)
+    ConnectUpdate();
+})
+Disconect.addEventListener('click', function () {
+    window.socket.emit('Disconnect')
+    DisconnectUpdate();
+})
+
+
+function ConnectUpdate() {
     Connect.style.display = 'none';
     Port.style.display = 'none';
     Portlabel.style.display = 'none';
     Disconect.style.display = 'inline';
-})
-Disconect.addEventListener('click', function () {
-    window.socket.emit('Disconnect')
+}
+function DisconnectUpdate() {
     Connect.style.display = 'inline';
     Port.style.display = 'inline';
     Disconect.style.display = 'none';
-})
-
-
-
-
+}
 
 
 
