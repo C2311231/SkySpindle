@@ -26,6 +26,7 @@ class GRBLConection():
         self.RealSpindle = 0
         self.triggeredPins = None
         self.accessoryState = None
+        self.Mpos = [0, 0, 0]
 
         
     def SendCommand(self, command, socketio, htmlclass):
@@ -114,7 +115,6 @@ class GRBLConection():
         junk = self.SendCommand(f'$J=G91 G21 X{disX} Y{disY} Z{disZ} F{feedrate}', socketio, 'systemsent') 
         
     def adjustSpindle(self, socketio, desired):
-        
         self.StatusReport(socketio)
         if desired == '100':
             self.SendCommand(b'\x99', socketio, 'systemsent')
@@ -122,15 +122,21 @@ class GRBLConection():
         elif str(self.Ov[2]) == desired:
             return
         
-        elif str(self.Ov[2]) < desired:
+        elif int(self.Ov[2]) < int(desired):
             iterations = int(desired) - int(self.Ov[2])
-            for i in range(0, iterations):
+            for i in range(0, int(iterations/10)):
+                self.SendCommand(b'\x9A', socketio, 'systemsent')
+                time.sleep(0.02)
+            for i in range(0, int(iterations%10)):
                 self.SendCommand(b'\x9C', socketio, 'systemsent')
                 time.sleep(0.02)
             
         else:
             iterations = int(self.Ov[2]) - int(desired)
-            for i in range(0, iterations):
+            for i in range(0, int(iterations/10)):
+                self.SendCommand(b'\x9B', socketio, 'systemsent')
+                time.sleep(0.02)
+            for i in range(0, int(iterations%10)):
                 self.SendCommand(b'\x9D', socketio, 'systemsent')
                 time.sleep(0.02)
                 
