@@ -20,8 +20,6 @@ GRBL_COMMAND_BUFFER = []
 def home():
     return render_template('layout.html')
 
-
-
 @socketio.on('Jog')
 def fil(data):
     GRBL_COMMAND_BUFFER.append(['Jog', data['x'], data['y'], data['z'], 1000])
@@ -41,6 +39,11 @@ def file(data):
 def filr(data):
     GRBL_COMMAND_BUFFER.append(['SendCommand', f'M03 S{data}', 'systemsent'])
     
+@scheduler.task('interval', id='GetSettings', seconds=5, max_instances=5)
+def SendPositionData():
+    GRBL_COMMAND_BUFFER.append(['GetGRBLSettings'])
+    socketio.emit('settings', GRBL.settings)
+    socketio.emit('State', State)
 
 @scheduler.task('interval', id='GetPos', seconds=0.3, max_instances=5)
 def SendPositionData():
@@ -69,6 +72,8 @@ def Connect(data):
     GRBLthread.start()
     global State
     State = 'Connected'
+    GRBL_COMMAND_BUFFER.append(['GetGRBLSettings'])
+    
 @socketio.on('Disconnect')
 def Disconnect():
     GRBL.stop_thread()
@@ -78,6 +83,9 @@ def Disconnect():
     global State
     State = 'Disconnected'
     
+@socketio.on('ChangeSetting')
+def ChangeSetting(data):
+    GRBL_COMMAND_BUFFER.append(['ChangeSetting', data[0], data[1]])
     
 @socketio.on('connect')
 def SendPorts(data):

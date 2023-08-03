@@ -4,7 +4,7 @@ window.socket = io()
 var timeoutId;
 
 
-
+var UPDATESETTINGS = true;
 //Vars
 var Jogslider = document.getElementById("Jogdistance");
 var JogDis = document.getElementById("JogDisLabel");
@@ -61,6 +61,8 @@ var SpindleSpeed = document.getElementById('Spindle');
 
 var SendConsole = document.getElementById('consolesend')
 var ConsoleInput = document.getElementById('consoleinput')
+
+var machineOptions = document.getElementsByClassName('machineOption')
 
 // Slider Handlers
 
@@ -191,9 +193,55 @@ window.socket.on('position', function (data) {
     Ypos.value = data[1]
     Zpos.value = data[2]
 });
-// window.socket.on('settings', function (data) {
-//     data.
-// });
+window.socket.on('settings', function (data) {
+    if (UPDATESETTINGS){
+    document.getElementById('machineMaxRateX').value = data.$110
+    document.getElementById('machineMaxRateY').value = data.$111
+    document.getElementById('machineMaxRateZ').value = data.$112
+
+    document.getElementById('machineAccelerationX').value = data.$120
+    document.getElementById('machineAccelerationY').value = data.$121
+    document.getElementById('machineAccelerationZ').value = data.$122
+
+    document.getElementById('machineStepsX').value = data.$100
+    document.getElementById('machineStepsY').value = data.$101
+    document.getElementById('machineStepsZ').value = data.$102
+
+    document.getElementById('machineMaxTravelX').value = data.$130
+    document.getElementById('machineMaxTravelY').value = data.$131
+    document.getElementById('machineMaxTravelZ').value = data.$132
+
+    document.getElementById('SpindleMin').value = data.$31
+    document.getElementById('SpindleMax').value = data.$30
+
+    document.getElementById('machineStepPulse').value = data.$0
+    document.getElementById('machineStepDelay').value = data.$1
+    document.getElementById('machineStepPortInvert').value = data.$2
+
+    document.getElementById('DirectionInvert').value = data.$3
+    document.getElementById('StepEnableInvert').value = data.$4
+    document.getElementById('LimitPinsInvert').value = data.$5
+
+    document.getElementById('ProbePinInvert').value = data.$6
+    document.getElementById('StatusReportMode').value = data.$10
+    document.getElementById('JunctionDeviation').value = data.$11
+
+    document.getElementById('ArcTolerance').value = data.$12
+    document.getElementById('Inches').value = data.$13
+    document.getElementById('Softlimits').value = data.$20
+
+    document.getElementById('HardLimit').value = data.$21
+    document.getElementById('HomingCycle').value = data.$22
+    document.getElementById('InvertHomeDir').value = data.$23
+    
+    document.getElementById('HomingFeed').value = data.$24
+    document.getElementById('HomingSeek').value = data.$25
+    document.getElementById('HomingDebounce').value = data.$26
+
+    document.getElementById('HomingPull-off').value = data.$27
+    document.getElementById('LaserMode').value = data.$32
+    }
+});
 window.socket.on('console', function (data) {
     if (data.class == 'systemquery') {
         return
@@ -204,18 +252,6 @@ window.socket.on('console', function (data) {
     </div>
     <hr>
     ` + grblconsole.innerHTML;
-});
-window.socket.on('machine', function (data) {
-    machineAccelerationX.value = data.machineAccelerationX;
-    machineAccelerationY.value = data.machineAccelerationY;
-    machineAccelerationZ.value = data.machineAccelerationZ;
-
-    machineMaxRateX.value = data.machineMaxRateX;
-    machineMaxRateY.value = data.machineMaxRateY;
-    machineMaxRateZ.value = data.machineMaxRateZ;
-
-    Feedrate.value = data.Feedrate;
-    Spindle.value = data.Spindle;
 });
 
 window.socket.on('operation', function (data) {
@@ -238,6 +274,16 @@ window.socket.on('USBPorts', function (data) {
 
 // Send data
 
+for (let i = 0; i < machineOptions.length; i++) {
+    let inputElement = machineOptions[i].getElementsByTagName('input')[0];
+    inputElement.oninput = function () {
+        clearTimeout(timeoutId);
+        var inputData = this; // Use 'this' to refer to the current inputElement
+        timeoutId = setTimeout(function () {
+            window.socket.emit('ChangeSetting', [inputData.dataset.send, inputData.value]);
+        }, 500);
+    };
+}
 
 
 

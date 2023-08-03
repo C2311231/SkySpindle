@@ -171,6 +171,8 @@ class GRBLConection():
             self.SendCommand(b'\x96', socketio, 'systemsent')
         else:
             self.SendCommand(b'\x97', socketio, 'systemsent')
+    def ChangeSetting(self, socketio, setting, value):
+        self.SendCommand(f'{setting}={value}', socketio, 'systemsent')
     def Async(self, socketio, buffer):
         self.running=True
         while self.running:
@@ -189,6 +191,10 @@ class GRBLConection():
                         self.StatusReport(socketio)
                     elif command[0] == 'adjustRapid':
                         self.adjustRapid(socketio, command[1])
+                    elif command[0] == 'GetGRBLSettings':
+                        self.GetGRBLSettings(socketio)
+                    elif command[0] == 'ChangeSetting':
+                        self.ChangeSetting(socketio, command[1], command[2])
                     buffer.remove(command)
     def stop_thread(self):
         self.running=False

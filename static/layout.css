@@ -235,7 +235,7 @@ input::-webkit-inner-spin-button {
 .PosInput .Z {
     grid-column: 3;
 }
-.PosInput input, span input, .machineOption input{
+.PosInput input, span input, .machineOption input, .FalseMachineOption input{
     width: 50%;
     margin: auto;
     padding: 5px;
@@ -309,7 +309,7 @@ input::-webkit-inner-spin-button {
     grid-template-rows: 50% 50%;
 }
 
-.machineOption {
+.machineOption, .FalseMachineOption {
     height: auto;
     margin: auto;
     display: grid;
@@ -317,12 +317,12 @@ input::-webkit-inner-spin-button {
     padding: 5px;
 }
 
-.machineOption input {
+.machineOption input, .FalseMachineOption input {
     height: 50%;
     margin-top: auto;
     margin-bottom: auto;
 }
-.machineOption p {
+.machineOption p, .FalseMachineOption p {
     padding-left: 15px;
 }
 hr {
