@@ -254,16 +254,20 @@ window.socket.on('console', function (data) {
     ` + grblconsole.innerHTML;
 });
 
-window.socket.on('operation', function (data) {
-    operations.innerHTML += ```        
-    <div class="listItem">
-        ${data.filename} < button class="CycleStart" onClick=(function(){window.socket.emit('Start', ${data.filename}}))>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="green" class="bi bi-play-fill" viewBox="0 0 16 16">
-                <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z" />
-            </svg>
-        </button >
-    </div >
-    <hr>```;
+window.socket.on('operations', function (data) {
+    operations.innerHTML = `<h2>Saved cycles:</h2><hr>`;
+    data.forEach(element => {
+        operations.innerHTML += `        
+        <div class="listItem">
+            ${element} <button class="CycleStart" onClick="window.socket.emit('Start', '${element}');">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="green" class="bi bi-play-fill" viewBox="0 0 16 16">
+                    <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z" />
+                </svg>
+            </button >
+        </div >
+        <hr>`;  
+    });
+
 });
 window.socket.on('USBPorts', function (data) {
     Port.innerHTML = '';
@@ -377,9 +381,40 @@ function DisconnectUpdate() {
     Port.style.display = 'inline';
     Disconect.style.display = 'none';
 }
+const dropArea = document.getElementsByTagName('body')[0];
 
+// Prevent default behavior when a file is dragged over the drop area
+dropArea.addEventListener('dragover', event => {
+    event.preventDefault();
+    dropArea.style.border = '2px dashed blue';
+});
 
+// Handle file drop
+dropArea.addEventListener('drop', event => {
+    event.preventDefault();
+    dropArea.style.border = '2px dashed #ccc';
 
+    const files = event.dataTransfer.files;
+    for (var i = 0; i < files.length; i++) {
+        if (files[i]) {
+            const formData = new FormData();
+            formData.append('file', files[i]);
+    
+            fetch('/upload', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('File uploaded:', data);
+            })
+            .catch(error => {
+                console.error('Error uploading file:', error);
+            });
+        }
+    }
+
+});
 
 
 
