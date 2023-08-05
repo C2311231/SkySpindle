@@ -11,7 +11,6 @@ def getUSBPorts():
     return ports
 
 class GRBLConection():
-    
     def __init__(self, port, baudrate):
         self.connection = serial.Serial(port, baudrate, timeout = 0.5)
         print('Opening Serial Port')
@@ -42,6 +41,7 @@ class GRBLConection():
             socketio.emit('console', {"timestamp": datetime.datetime.now().strftime("%H:%M:%S"), 'command': response, 'class': 'recive'})
         return response
         
+        
     def GetGRBLSettings(self, socketio):
         self.settings = self.SendCommand('$$', socketio, 'systemsent')
         self.settings = self.settings.replace('\r', '').replace('ok\n', '') # Converts to a string then removes \r and confirmation from responses 
@@ -52,8 +52,8 @@ class GRBLConection():
         self.settings = dict(self.settings)   # Convert to a dictionary
         return self.settings
     
+    
     def StatusReport(self, socketio):
-
         response = self.SendCommand('?', socketio, 'systemquery').replace('<', '').replace('>\r\n', '').replace('ok\r\n', '').split('|')
         itemDict = {}
         for item in response:
@@ -111,17 +111,17 @@ class GRBLConection():
         itemDict['RealSpindle'] = self.RealSpindle
         return itemDict
 
+
     def Jog(self, socketio, disX, disY, disZ, feedrate):
-        junk = self.SendCommand(f'$J=G91 G21 X{disX} Y{disY} Z{disZ} F{feedrate}', socketio, 'systemsent') 
+        self.SendCommand(f'$J=G91 G21 X{disX} Y{disY} Z{disZ} F{feedrate}', socketio, 'systemsent') 
+        
         
     def adjustSpindle(self, socketio, desired):
         self.StatusReport(socketio)
         if desired == '100':
             self.SendCommand(b'\x99', socketio, 'systemsent')
-        
         elif str(self.Ov[2]) == desired:
             return
-        
         elif int(self.Ov[2]) < int(desired):
             iterations = int(desired) - int(self.Ov[2])
             for i in range(0, int(iterations/10)):
@@ -130,7 +130,6 @@ class GRBLConection():
             for i in range(0, int(iterations%10)):
                 self.SendCommand(b'\x9C', socketio, 'systemsent')
                 time.sleep(0.02)
-            
         else:
             iterations = int(self.Ov[2]) - int(desired)
             for i in range(0, int(iterations/10)):
@@ -139,14 +138,14 @@ class GRBLConection():
             for i in range(0, int(iterations%10)):
                 self.SendCommand(b'\x9D', socketio, 'systemsent')
                 time.sleep(0.02)
+                
+                
     def adjustFeed(self, socketio, desired):
         self.StatusReport(socketio)
         if desired == '100':
             self.SendCommand(b'\x90', socketio, 'systemsent')
-        
         elif str(self.Ov[0]) == desired:
             return
-        
         elif int(self.Ov[0]) < int(desired):
             iterations = int(desired) - int(self.Ov[0])
             for i in range(0, int(iterations/10)):
@@ -155,7 +154,6 @@ class GRBLConection():
             for i in range(0, int(iterations%10)):
                 self.SendCommand(b'\x93', socketio, 'systemsent')
                 time.sleep(0.02)
-            
         else:
             iterations = int(self.Ov[0]) - int(desired)
             for i in range(0, int(iterations/10)):
@@ -164,6 +162,8 @@ class GRBLConection():
             for i in range(0, int(iterations%10)):
                 self.SendCommand(b'\x94', socketio, 'systemsent')
                 time.sleep(0.02)
+                
+                
     def adjustRapid(self, socketio, value):
         if value == '100':
             self.SendCommand(b'\x95', socketio, 'systemsent')
@@ -171,11 +171,59 @@ class GRBLConection():
             self.SendCommand(b'\x96', socketio, 'systemsent')
         else:
             self.SendCommand(b'\x97', socketio, 'systemsent')
+            
+            
     def ChangeSetting(self, socketio, setting, value):
         self.SendCommand(f'{setting}={value}', socketio, 'systemsent')
+        
+        
+
+    def stop_thread(self):
+        self.Async=False
+        
+        
+    def SendFile(self, filePath, mode):
+        import re
+        file = open(filePath, 'r')
+        i = 0
+        if mode == 'Fast':
+            linesCharactorCounts = []
+            RX_BUFFER_SIZE = 128
+            GCodeCount = 0
+            self.operationLenght = len(file)
+            linesInBuffer = 0
+            for line in file:
+                line = re.sub(r'\s|\(.*?\)', '', line).upper()
+                linesCharactorCounts.append(len(line)+1)
+        
+                while sum(linesCharactorCounts) >= RX_BUFFER_SIZE - 1 or self.connection.in_Waiting():
+                    returnData = self.connection.readline().strip()
+                    if 'error' in returnData:
+                        print(f'GRBL Reports Error on line {i-linesInBuffer}:   {returnData}')
+                        return
+                    else:
+                        GCodeCount +=1
+                        linesInBuffer -= 1
+                        del linesCharactorCounts[0]
+                i += 1
+                self.connection.write((line + '\n').encode())
+                linesInBuffer += 1
+        if mode == 'Reliable':
+            for line in file:
+                l = line.strip() # Strip all EOL characters for consistency
+                self.connection.write(l + '\n') # Send g-code block to grbl
+                grbl_out = self.connection.readline() # Wait for grbl response with carriage return
+                i += 1
+    
+    
+    
+    
+    
+    
+    
     def Async(self, socketio, buffer):
-        self.running=True
-        while self.running:
+        self.Async=True
+        while self.Async:
             if buffer != []:
                 commands = buffer
                 for command in commands:
@@ -196,5 +244,3 @@ class GRBLConection():
                     elif command[0] == 'ChangeSetting':
                         self.ChangeSetting(socketio, command[1], command[2])
                     buffer.remove(command)
-    def stop_thread(self):
-        self.running=False
