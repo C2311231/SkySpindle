@@ -6,153 +6,16 @@
     </div>
     <div class="elementContent machine">
 
-        <div class="machineSection" style="grid-template-columns: 50% 50%;">
-            <div class="FalseMachineOption">
-                <p>Feedrate (mm/s):</p><input type="number" value="100" id="Feedrate">
-            </div>
-            <div class="FalseMachineOption">
-                <p>Spindle (rpm):</p><input type="number" value="1000" id="Spindle">
-            </div>
-        </div>
-        <hr>
         <div class="machineSection">
             <div class="machineOption">
-                <p>Acceleration X (mm/s&sup2):</p><input type="number" data-Send="$120" id="machineAccelerationX">
+                <p>Feedrate (mm/s):</p>
+                <input type="number" value="100" id="Feedrate">
             </div>
             <div class="machineOption">
-                <p>Acceleration Y (mm/s&sup2):</p><input type="number" data-Send="$121" id="machineAccelerationY">
-            </div>
-            <div class="machineOption">
-                <p>Acceleration Z (mm/s&sup2):</p><input type="number" data-Send="$122" id="machineAccelerationZ">
+                <p>Spindle (rpm):</p>
+                <input type="number" value="1000" id="Spindle">
             </div>
         </div>
-        <hr>
-        <div class="machineSection">
-            <div class="machineOption">
-                <p>Max Rate X (mm/s):</p><input type="number" data-Send="$110" id="machineMaxRateX">
-            </div>
-            <div class="machineOption">
-                <p>Max Rate Y (mm/s):</p><input type="number" data-Send="$111" id="machineMaxRateY">
-            </div>
-            <div class="machineOption">
-                <p>Max Rate Z (mm/s):</p><input type="number" data-Send="$112" id="machineMaxRateZ">
-            </div>
-        </div>
-        <hr>
-        <div class="machineSection">
-            <div class="machineOption">
-                <p>Max Travel X (mm):</p><input type="number" data-Send="$130" id="machineMaxTravelX">
-            </div>
-            <div class="machineOption">
-                <p>Max Travel Y (mm):</p><input type="number" data-Send="$131" id="machineMaxTravelY">
-            </div>
-            <div class="machineOption">
-                <p>Max Travel Z (mm):</p><input type="number" data-Send="$132" id="machineMaxTravelZ">
-            </div>
-        </div>
-        <hr>
-        <div class="machineSection">
-            <div class="machineOption">
-                <p>X steps/mm:</p><input type="number" data-Send="$100" id="machineStepsX">
-            </div>
-            <div class="machineOption">
-                <p>Y steps/mm:</p><input type="number" data-Send="$101" id="machineStepsY">
-            </div>
-            <div class="machineOption">
-                <p>Z steps/mm:</p><input type="number" data-Send="$102" id="machineStepsZ">
-            </div>
-        </div>
-        <hr>
-        <div class="machineSection">
-            <div class="machineOption">
-                <p>Step Pulse, Microseconds:</p><input type="number" data-Send="$0" id="machineStepPulse">
-            </div>
-            <div class="machineOption">
-                <p>Step Idle Delay, Milliseconds:</p><input type="number" data-Send="$1" id="machineStepDelay">
-            </div>
-            <div class="machineOption">
-                <p>Step Port Invert:</p><input type="number" data-Send="$2" id="machineStepPortInvert">
-            </div>
-        </div>
-        <hr>
-        <div class="machineSection">
-            <div class="machineOption">
-                <p>Direction Port Invert:</p><input type="number" data-Send="$3" id="DirectionInvert">
-            </div>
-            <div class="machineOption">
-                <p>Step Enable Invert, Boolean:</p><input type="number" data-Send="$4" id="StepEnableInvert">
-            </div>
-            <div class="machineOption">
-                <p>Limit Pins Invert, Boolean:</p><input type="number" data-Send="$5" id="LimitPinsInvert">
-            </div>
-        </div>
-        <hr>
-        <div class="machineSection">
-            <div class="machineOption">
-                <p>Probe Pin Invert, Boolean:</p><input type="number" data-Send="$6" id="ProbePinInvert">
-            </div>
-            <div class="machineOption">
-                <p>Status Report Mode:</p><input type="number" data-Send="$10" id="StatusReportMode">
-            </div>
-            <div class="machineOption">
-                <p>Junction Deviation, mm:</p><input type="number" data-Send="$11" id="JunctionDeviation">
-            </div>
-        </div>
-        <hr>
-        <div class="machineSection">
-            <div class="machineOption">
-                <p>Arc Tolerance, mm:</p><input type="number" data-Send="$12" id="ArcTolerance">
-            </div>
-            <div class="machineOption">
-                <p>Report Inches, Boolean:</p><input type="number" data-Send="$13" id="Inches">
-            </div>
-            <div class="machineOption">
-                <p>Soft Limits, Boolean:</p><input type="number" data-Send="$20" id="Softlimits">
-            </div>
-        </div>
-        <hr>
-        <div class="machineSection">
-            <div class="machineOption">
-                <p>Hard Limits, Boolean:</p><input type="number" data-Send="$21" id="HardLimit">
-            </div>
-            <div class="machineOption">
-                <p>Homing Cycle, Boolean:</p><input type="number" data-Send="$22" id="HomingCycle">
-            </div>
-            <div class="machineOption">
-                <p>Homing Direction Invert:</p><input type="number" data-Send="$23" id="InvertHomeDir">
-            </div>
-        </div>
-        <hr>
-        <div class="machineSection">
-            <div class="machineOption">
-                <p>Homing Feed, mm/min</p><input type="number" data-Send="$24" id="HomingFeed">
-            </div>
-            <div class="machineOption">
-                <p>Homing Seek, mm/min:</p><input type="number" data-Send="$25" id="HomingSeek">
-            </div>
-            <div class="machineOption">
-                <p>Homing Debounce, Milliseconds:</p><input type="number" data-Send="$26" id="HomingDebounce">
-            </div>
-        </div>
-        <hr>
-        <div class="machineSection" style="grid-template-columns: 50% 50%;">
-            <div class="machineOption">
-                <p>Homing Pull-off, mm:</p><input type="number" data-Send="$27" id="HomingPull-off">
-            </div>
-            <div class="machineOption">
-                <p>Laser Mode, Boolean:</p><input type="number" data-Send="$32" id="LaserMode">
-            </div>
-        </div>
-        <hr>
-        <div class="machineSection" style="grid-template-columns: 50% 50%;">
-            <div class="machineOption">
-                <p>Min Spindle RPM:</p><input type="number" data-Send="" id="SpindleMin">
-            </div>
-            <div class="machineOption">
-                <p>Max Spindle RPM:</p><input type="number" data-Send="" id="SpindleMax">
-            </div>
-        </div>
-
     </div>
 
 </div>

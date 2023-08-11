@@ -26,12 +26,13 @@ body {
     border-radius: 3px;
 }
 .elementTitle {
-    height: 5vh;
     background-color: #272727;
     border-radius: 3px 3px 0px 0px;
     align-items:center;
     display: flex;
-    justify-content:center;
+    justify-content: center;
+    padding: 0px 10px 0px 10px;
+    height: 5vh;
 }
 #columnsm {
     height: 100%;
@@ -235,7 +236,7 @@ input::-webkit-inner-spin-button {
 .PosInput .Z {
     grid-column: 3;
 }
-.PosInput input, span input, .machineOption input, .FalseMachineOption input{
+.PosInput input, span input, .machineOption input, td input {
     width: 50%;
     margin: auto;
     padding: 5px;
@@ -305,8 +306,7 @@ input::-webkit-inner-spin-button {
 }
 .machineSection {
     display: grid;
-    grid-template-columns:  33% 33% 33%;
-    grid-template-rows: 50% 50%;
+    grid-template-columns: 50% 50%;
 }
 
 .machineOption, .FalseMachineOption {
@@ -316,7 +316,7 @@ input::-webkit-inner-spin-button {
     grid-template-columns: 50% 50%;
     padding: 5px;
 }
-
+ 
 .machineOption input, .FalseMachineOption input {
     height: 50%;
     margin-top: auto;
@@ -378,4 +378,50 @@ hr {
     color: white;
     background-color: #f0242460;
     display: none;
+}
+
+.floatingMenu {
+    position: fixed;
+    z-index: 10;
+    top: 10vh;
+    left: 10vw;
+    width: 80vw;
+    height: 80vh;
+    margin: 0;
+    border-radius: 40px;
+    display: none;
+}
+.SettingLabel {
+    width: 16px !important;
+}
+
+.floatingMenu .elementContent {
+    width: 100%;
+    height: 90%;
+    overflow: auto;
+}
+
+.overlay {
+    z-index: 2;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+}
+
+.closeBtn {
+    justify-content: flex-end !important;
+    margin-left: auto;
+    text-align: right;
+}
+
+.floatingMenu .elementContent table {
+    padding: 15px;
+}
+td{
+    padding: 10px;
+}
+.machineSetting {
+    width: 100% !important;
 }

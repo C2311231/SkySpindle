@@ -1,10 +1,12 @@
 import '/static/js/SocketIo.js';
 
+
 window.socket = io()
 var timeoutId;
 
 
 var UPDATESETTINGS = true;
+
 //Vars
 var Jogslider = document.getElementById("Jogdistance");
 var JogDis = document.getElementById("JogDisLabel");
@@ -26,17 +28,6 @@ var Portlabel = document.getElementById('portLabel');
 var Xpos = document.getElementById('Xpos');
 var Ypos = document.getElementById('Ypos');
 var Zpos = document.getElementById('Zpos');
-
-var machineAccelerationX = document.getElementById('machineAccelerationX');
-var machineAccelerationY = document.getElementById('machineAccelerationY');
-var machineAccelerationZ = document.getElementById('machineAccelerationZ');
-
-var machineMaxRateX = document.getElementById('machineMaxRateX');
-var machineMaxRateY = document.getElementById('machineMaxRateY');
-var machineMaxRateZ = document.getElementById('machineMaxRateZ');
-
-var Feedrate = document.getElementById('Feedrate');
-var Spindle = document.getElementById('Spindle');
 
 var operations = document.getElementById('operations');
 var grblconsole = document.getElementById('Consolelist');
@@ -62,7 +53,26 @@ var SpindleSpeed = document.getElementById('Spindle');
 var SendConsole = document.getElementById('consolesend')
 var ConsoleInput = document.getElementById('consoleinput')
 
-var machineOptions = document.getElementsByClassName('machineOption')
+var machineSetting = document.getElementsByClassName('machineSetting')
+
+
+var CloseMachineSettings = document.getElementById('CloseMachineSettings');
+var MachineSettings = document.getElementById('MachineSettings');
+var OpenMachineSettings = document.getElementById('OpenMachineSettings');
+var overlay = document.getElementById('overlay');
+
+//UI Logic
+CloseMachineSettings.onclick = function () {
+    MachineSettings.style = 'display: none'
+    overlay.style = 'display: none'
+}
+OpenMachineSettings.onclick = function () {
+    MachineSettings.style = 'display: block'
+    overlay.style = 'display: block'
+}
+
+
+
 
 // Slider Handlers
 
@@ -195,65 +205,66 @@ window.socket.on('position', function (data) {
 });
 window.socket.on('settings', function (data) {
     if (UPDATESETTINGS){
-    document.getElementById('machineMaxRateX').value = data.$110
-    document.getElementById('machineMaxRateY').value = data.$111
-    document.getElementById('machineMaxRateZ').value = data.$112
+    document.getElementById('110').value = data.$110
+    document.getElementById('111').value = data.$111
+    document.getElementById('112').value = data.$112
 
-    document.getElementById('machineAccelerationX').value = data.$120
-    document.getElementById('machineAccelerationY').value = data.$121
-    document.getElementById('machineAccelerationZ').value = data.$122
+    document.getElementById('120').value = data.$120
+    document.getElementById('121').value = data.$121
+    document.getElementById('122').value = data.$122
 
-    document.getElementById('machineStepsX').value = data.$100
-    document.getElementById('machineStepsY').value = data.$101
-    document.getElementById('machineStepsZ').value = data.$102
+    document.getElementById('100').value = data.$100
+    document.getElementById('101').value = data.$101
+    document.getElementById('102').value = data.$102
 
-    document.getElementById('machineMaxTravelX').value = data.$130
-    document.getElementById('machineMaxTravelY').value = data.$131
-    document.getElementById('machineMaxTravelZ').value = data.$132
+    document.getElementById('130').value = data.$130
+    document.getElementById('131').value = data.$131
+    document.getElementById('132').value = data.$132
 
-    document.getElementById('SpindleMin').value = data.$31
-    document.getElementById('SpindleMax').value = data.$30
+    document.getElementById('31').value = data.$31
+    document.getElementById('30').value = data.$30
 
-    document.getElementById('machineStepPulse').value = data.$0
-    document.getElementById('machineStepDelay').value = data.$1
-    document.getElementById('machineStepPortInvert').value = data.$2
+    document.getElementById('0').value = data.$0
+    document.getElementById('1').value = data.$1
+    document.getElementById('2').value = data.$2
 
-    document.getElementById('DirectionInvert').value = data.$3
-    document.getElementById('StepEnableInvert').value = data.$4
-    document.getElementById('LimitPinsInvert').value = data.$5
+    document.getElementById('3').value = data.$3
+    document.getElementById('4').value = data.$4
+    document.getElementById('5').value = data.$5
 
-    document.getElementById('ProbePinInvert').value = data.$6
-    document.getElementById('StatusReportMode').value = data.$10
-    document.getElementById('JunctionDeviation').value = data.$11
+    document.getElementById('6').value = data.$6
+    document.getElementById('10').value = data.$10
+    document.getElementById('11').value = data.$11
 
-    document.getElementById('ArcTolerance').value = data.$12
-    document.getElementById('Inches').value = data.$13
-    document.getElementById('Softlimits').value = data.$20
+    document.getElementById('12').value = data.$12
+    document.getElementById('13').value = data.$13
+    document.getElementById('20').value = data.$20
 
-    document.getElementById('HardLimit').value = data.$21
-    document.getElementById('HomingCycle').value = data.$22
-    document.getElementById('InvertHomeDir').value = data.$23
+    document.getElementById('21').value = data.$21
+    document.getElementById('22').value = data.$22
+    document.getElementById('23').value = data.$23
     
-    document.getElementById('HomingFeed').value = data.$24
-    document.getElementById('HomingSeek').value = data.$25
-    document.getElementById('HomingDebounce').value = data.$26
+    document.getElementById('24').value = data.$24
+    document.getElementById('25').value = data.$25
+    document.getElementById('26').value = data.$26
 
-    document.getElementById('HomingPull-off').value = data.$27
-    document.getElementById('LaserMode').value = data.$32
+    document.getElementById('27').value = data.$27
+    document.getElementById('32').value = data.$32
     }
 });
 window.socket.on('console', function (data) {
-    if (data.class == 'systemquery') {
-        return
-    }
+    // if (data.class == 'systemquery') {
+    //     return
+    // }
     grblconsole.innerHTML = `        
-    <div class="consoleitem ${data.class}">
-        <h5>${data.timestamp} -- ${htmlEscape(data.command)}</h5>
+    <div class="consoleitem ">
+        <h5>${htmlEscape(data)}</h5>
+        
     </div>
     <hr>
     ` + grblconsole.innerHTML;
 });
-
+// <h5>${data.timestamp} -- ${htmlEscape(data.command)}</h5>    ${data.class}
 window.socket.on('operations', function (data) {
     operations.innerHTML = `<h2>Saved cycles:</h2><hr>`;
     data.forEach(element => {
@@ -278,9 +289,8 @@ window.socket.on('USBPorts', function (data) {
 
 // Send data
 
-for (let i = 0; i < machineOptions.length; i++) {
-    let inputElement = machineOptions[i].getElementsByTagName('input')[0];
-    inputElement.oninput = function () {
+for (let i = 0; i < machineSetting.length; i++) {
+    machineSetting[i].oninput = function () {
         clearTimeout(timeoutId);
         var inputData = this; // Use 'this' to refer to the current inputElement
         timeoutId = setTimeout(function () {

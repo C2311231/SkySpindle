@@ -4,6 +4,18 @@ import grblCom
 from flask_apscheduler import APScheduler
 import threading
 import os
+import yaml
+import csv
+
+SettingsData = []
+
+with open("./data/setting_codes_en_US.csv", "r") as f:
+    data = csv.DictReader(f)
+    for item in data:
+        SettingsData.append(item)
+
+with open("config.yaml", "r") as f:
+    config = yaml.load(f, Loader=yaml.FullLoader)
 
 app = Flask(__name__)
 app.secret_key = 'key123'
@@ -20,26 +32,26 @@ OPERATIONS = []
 
 @app.route('/')
 def home():
-    return render_template('layout.html')
+    return render_template('layout.html', SettingsData=SettingsData)
 
 @socketio.on('Jog')
 def fil(data):
-    GRBL_COMMAND_BUFFER.append(['Jog', data['x'], data['y'], data['z'], 1000])
+    GRBL_COMMAND_BUFFER.append(['Jog', [data['x'], data['y'], data['z'], 1000]])
     
     
 @socketio.on('sendconsole')
 def fili(data):
-    GRBL_COMMAND_BUFFER.append(['SendCommand', data, 'user'])
+    GRBL_COMMAND_BUFFER.append(['SendCommand', [data, 'user']])
     
     
 @socketio.on('home')
 def file(data):
-    GRBL_COMMAND_BUFFER.append(['SendCommand', f'$H{data}', 'systemsent'])
+    GRBL_COMMAND_BUFFER.append(['SendCommand', [f'$H{data}', 'systemsent']])
     
 
 @socketio.on('spindle')
 def filr(data):
-    GRBL_COMMAND_BUFFER.append(['SendCommand', f'M03 S{data}', 'systemsent'])
+    GRBL_COMMAND_BUFFER.append(['SendCommand', [f'M03 S{data}', 'systemsent']])
     
 @scheduler.task('interval', id='GetSettings', seconds=5, max_instances=5)
 def SendPositionData():
@@ -70,19 +82,23 @@ def filr(data):
 @socketio.on('Connect')
 def Connect(data):
     global GRBL
-    global GRBLthread
-    GRBL = grblCom.GRBLConection(data, 115200)
+    global GRBLthread1
+    global GRBLthread2
+    GRBL = grblCom.GRBLConection(data, 115200, SendData)
     scheduler.resume()
-    GRBLthread = GRBLthread = threading.Thread(target=GRBL.Async, args=(socketio, GRBL_COMMAND_BUFFER), daemon=True)
-    GRBLthread.start()
+    GRBLthread1 = threading.Thread(target=GRBL.Async, args=(GRBL_COMMAND_BUFFER,), daemon=True)
+    GRBLthread2 = threading.Thread(target=GRBL.GetData, args=(), daemon=True)
+    GRBLthread1.start()
+    GRBLthread2.start()
     global State
     State = 'Connected'
     GRBL_COMMAND_BUFFER.append(['GetGRBLSettings'])
     
 @socketio.on('Disconnect')
 def Disconnect():
-    GRBL.stop_thread()
-    GRBLthread.join()
+    GRBL.stop_threads()
+    GRBLthread1.join()
+    GRBLthread2.join()
     GRBL.connection.close()
     scheduler.pause()
     global State
@@ -90,7 +106,7 @@ def Disconnect():
     
 @socketio.on('ChangeSetting')
 def ChangeSetting(data):
-    GRBL_COMMAND_BUFFER.append(['ChangeSetting', data[0], data[1]])
+    GRBL_COMMAND_BUFFER.append(['ChangeSetting', [data[0], data[1]]])
     
 @socketio.on('connect')
 def SendPorts(data):
@@ -100,7 +116,7 @@ def SendPorts(data):
 
 @socketio.on('Start')
 def StartCycle(data):
-    print(data)
+    GRBL_COMMAND_BUFFER.append(['StartOperation', data])
 
 
 
@@ -114,6 +130,14 @@ def upload_file():
         socketio.emit('operations', OPERATIONS)
         return jsonify(message='File uploaded successfully.')
     return jsonify(message='No file uploaded.'), 400
+
+
+def SendData(Name, data):
+    socketio.emit(Name, data)
+
+
+
+
 
 if __name__ == "__main__":
     scheduler.start()

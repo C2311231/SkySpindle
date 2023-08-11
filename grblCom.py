@@ -3,6 +3,9 @@ import serial.tools.list_ports
 import time
 import datetime
 import threading
+import re
+
+
 def getUSBPorts():
     comPorts = serial.tools.list_ports.comports()
     ports = []
@@ -11,12 +14,11 @@ def getUSBPorts():
     return ports
 
 class GRBLConection():
-    def __init__(self, port, baudrate):
-        self.connection = serial.Serial(port, baudrate, timeout = 0.5)
+    def __init__(self, port, baudrate, SendData):
+        self.connection = serial.Serial(port, baudrate)
         print('Opening Serial Port')
         self.connection.write(str.encode("\r\n\r\n")) # Wake up GRBL Connection
-        time.sleep(2) # Wait for GRBL to respond
-        print(self.connection.read_until(expected=b'ok\r\n').decode('utf-8'))
+        
         # Default Values
         self.WCO = [0,0,0]
         self.Ov = [100, 100, 100]
@@ -25,156 +27,137 @@ class GRBLConection():
         self.triggeredPins = None
         self.accessoryState = None
         self.Mpos = [0, 0, 0]
-
+        self.SocketEmit = SendData
+        self.okCount = 0
+        self.receive = []
+        self.settings = {}
+        self.requested = 0
+        self.allowtransmit = True
         
-    def SendCommand(self, command, socketio, htmlclass):
+    def SendCommand(self, command):
         if isinstance(command, bytes):
             self.connection.write(command)
             self.connection.write(str.encode('\n'))
         else:
             self.connection.write(str.encode(f"{command}\n"))
-        socketio.emit('console', {"timestamp": datetime.datetime.now().strftime("%H:%M:%S"), 'command': command, 'class': htmlclass})
-        response = self.connection.read_until(expected=b'ok\r\n').decode('utf-8')
-        if htmlclass == 'systemquery':
-            socketio.emit('console', {"timestamp": datetime.datetime.now().strftime("%H:%M:%S"), 'command': response, 'class': 'systemquery'})
-        else:
-            socketio.emit('console', {"timestamp": datetime.datetime.now().strftime("%H:%M:%S"), 'command': response, 'class': 'recive'})
-        return response
         
         
-    def GetGRBLSettings(self, socketio):
-        self.settings = self.SendCommand('$$', socketio, 'systemsent')
-        self.settings = self.settings.replace('\r', '').replace('ok\n', '') # Converts to a string then removes \r and confirmation from responses 
-        self.settings = [i for i in self.settings.split('\n') if i]       # Removes Empty Strings from list after seperating newlines to a list (Due to the final \n at the end of the list it creates a empty string)
+    def GetGRBLSettings(self):
+        self.SendCommand('$$')
         
-        # Convert list to dictionary
-        self.settings = [parameter.split('=') for parameter in self.settings] # Split each string in settings floato a list containing the setting and its value
-        self.settings = dict(self.settings)   # Convert to a dictionary
-        return self.settings
-    
-    
-    def StatusReport(self, socketio):
-        response = self.SendCommand('?', socketio, 'systemquery').replace('<', '').replace('>\r\n', '').replace('ok\r\n', '').split('|')
-        itemDict = {}
+    def processGRBLSettings(self, data):
+        data = data.split('=') # Converts to a string then removes \r and confirmation from responses 
+        if data[0] not in self.settings:
+            self.settings[data[0]] = data[1]
+        
+    def StatusReportProcess(self, response):
+        response = response.replace('<', '').replace('>', '').split('|')
         for item in response:
-            key_value_pair  = item.split(':')
-            if key_value_pair[0] in ['Idle', 'Run', 'Hold', 'Jog', 'Alarm', 'Door', 'Check', 'Home', 'Sleep']:
-                if len(key_value_pair) == 2:
-                    self.status = key_value_pair[0]
-                    self.subStatus = key_value_pair[1]
+            if 'Idle' in item or 'Run' in item or 'Hold' in item or 'Jog' in item or 'Alarm' in item or 'Door' in item or 'Check' in item or 'Home' in item or 'Sleep' in item:
+                if ':' in item:
+                    self.status, self.subStatus = item.split(':')
                     
                 else:
-                    self.status = key_value_pair[0]
+                    self.status = item
                     self.subStatus = None
                     
-            elif key_value_pair[0] == 'WPos':
-                self.Wpos = list(map(float, key_value_pair[1].split(',')))
-                self.Mpos = [self.Wpos[0] + self.WCO[0], self.Wpos[1] + self.WCO[1], self.Wpos[2] + self.WCO[2]]
-                
-            elif key_value_pair[0] == 'MPos':
-                self.Mpos = list(map(float, key_value_pair[1].split(',')))
-                self.Wpos = [self.Mpos[0] - self.WCO[0], self.Mpos[1] - self.WCO[1], self.Mpos[2] - self.WCO[2]]
-                
-            elif key_value_pair[0] == 'WCO':
-                self.WCO = list(map(float, key_value_pair[1].split(',')))
-                
-            elif key_value_pair[0] == 'Ov':
-                self.Ov = list(map(float, key_value_pair[1].split(',')))
-                socketio.emit('Overides', self.Ov)
-                
-            elif key_value_pair[0] == 'F':
-                self.RealFeed = float(key_value_pair[1])
-                
-            elif key_value_pair[0] == 'FS':
-                FS = key_value_pair[1].split(',')
+            elif 'FS' in item:
+                FS = item.replace('FS:', '').split(',')
                 self.RealFeed = float(FS[0])
                 self.RealSpindle = float(FS[1])
                 
-            elif key_value_pair[0] == 'Ln':
-                self.LineNum = float(key_value_pair[1])
-
-            elif key_value_pair[0] == 'Pn':
-                self.triggeredPins = list(key_value_pair[1])
-            
-            elif key_value_pair[0] == 'A':
-                self.accessoryState = list(key_value_pair[1])
-
-        itemDict['Status'] = self.status
-        itemDict['SubStatus'] = self.subStatus
-        itemDict['WPos'] = self.Wpos
-        itemDict['MPos'] = self.Mpos
-        itemDict['WCO'] = self.WCO
-        itemDict['Ov'] = self.Ov
-        itemDict['RealFeed'] = self.RealFeed
-        itemDict['Pn'] = self.triggeredPins
-        itemDict['A'] = self.accessoryState
-        itemDict['RealSpindle'] = self.RealSpindle
-        return itemDict
-
-
-    def Jog(self, socketio, disX, disY, disZ, feedrate):
-        self.SendCommand(f'$J=G91 G21 X{disX} Y{disY} Z{disZ} F{feedrate}', socketio, 'systemsent') 
+            elif 'F' in item:
+                self.RealFeed = float(item.replace('F:', ''))
+                
+            elif 'WPos' in item:
+                value = item.replace('WPos:', '')
+                self.Wpos = list(map(float, value.split(',')))
+                self.Mpos = [self.Wpos[0] + self.WCO[0], self.Wpos[1] + self.WCO[1], self.Wpos[2] + self.WCO[2]]
+                
+            elif 'MPos' in item:
+                value = item.replace('MPos:', '')
+                self.Mpos = list(map(float, value.split(',')))
+                self.Wpos = [self.Mpos[0] - self.WCO[0], self.Mpos[1] - self.WCO[1], self.Mpos[2] - self.WCO[2]]
+                
+            elif 'WCO' in item:
+                value = item.replace('WCO:', '')
+                self.WCO = list(map(float, value.split(',')))
+                
+            elif 'Ov' in item:
+                value = item.replace('Ov:', '')
+                self.Ov = list(map(float, value.split(',')))
+                self.SocketEmit('Overides', self.Ov)
+                
+            elif 'Ln' in item:
+                self.LineNum = int(item)
+                
+            elif 'Pn' in item:
+                self.triggeredPins = list(item)
+                
+            elif 'A' in item:
+                self.accessoryState = list(item)
+                
+    def Jog(self, disX, disY, disZ, feedrate):
+        self.SendCommand(f'$J=G91 G21 X{disX} Y{disY} Z{disZ} F{feedrate}\n') 
         
         
-    def adjustSpindle(self, socketio, desired):
-        self.StatusReport(socketio)
+    def adjustSpindle(self, desired):
         if desired == '100':
-            self.SendCommand(b'\x99', socketio, 'systemsent')
+            self.SendCommand(b'\x99')
         elif str(self.Ov[2]) == desired:
             return
         elif int(self.Ov[2]) < int(desired):
             iterations = int(desired) - int(self.Ov[2])
             for i in range(0, int(iterations/10)):
-                self.SendCommand(b'\x9A', socketio, 'systemsent')
+                self.SendCommand(b'\x9A')
                 time.sleep(0.02)
             for i in range(0, int(iterations%10)):
-                self.SendCommand(b'\x9C', socketio, 'systemsent')
+                self.SendCommand(b'\x9C')
                 time.sleep(0.02)
         else:
             iterations = int(self.Ov[2]) - int(desired)
             for i in range(0, int(iterations/10)):
-                self.SendCommand(b'\x9B', socketio, 'systemsent')
+                self.SendCommand(b'\x9B')
                 time.sleep(0.02)
             for i in range(0, int(iterations%10)):
-                self.SendCommand(b'\x9D', socketio, 'systemsent')
+                self.SendCommand(b'\x9D')
                 time.sleep(0.02)
                 
                 
-    def adjustFeed(self, socketio, desired):
-        self.StatusReport(socketio)
+    def adjustFeed(self, desired):
         if desired == '100':
-            self.SendCommand(b'\x90', socketio, 'systemsent')
+            self.SendCommand(b'\x90')
         elif str(self.Ov[0]) == desired:
             return
         elif int(self.Ov[0]) < int(desired):
             iterations = int(desired) - int(self.Ov[0])
             for i in range(0, int(iterations/10)):
-                self.SendCommand(b'\x91', socketio, 'systemsent')
+                self.SendCommand(b'\x91')
                 time.sleep(0.02)
             for i in range(0, int(iterations%10)):
-                self.SendCommand(b'\x93', socketio, 'systemsent')
+                self.SendCommand(b'\x93')
                 time.sleep(0.02)
         else:
             iterations = int(self.Ov[0]) - int(desired)
             for i in range(0, int(iterations/10)):
-                self.SendCommand(b'\x92', socketio, 'systemsent')
+                self.SendCommand(b'\x92')
                 time.sleep(0.02)
             for i in range(0, int(iterations%10)):
-                self.SendCommand(b'\x94', socketio, 'systemsent')
+                self.SendCommand(b'\x94')
                 time.sleep(0.02)
                 
                 
-    def adjustRapid(self, socketio, value):
+    def adjustRapid(self, value):
         if value == '100':
-            self.SendCommand(b'\x95', socketio, 'systemsent')
+            self.SendCommand(b'\x95')
         elif value == '50':
-            self.SendCommand(b'\x96', socketio, 'systemsent')
+            self.SendCommand(b'\x96')
         else:
-            self.SendCommand(b'\x97', socketio, 'systemsent')
+            self.SendCommand(b'\x97')
             
             
-    def ChangeSetting(self, socketio, setting, value):
-        self.SendCommand(f'{setting}={value}', socketio, 'systemsent')
+    def ChangeSetting(self, setting, value):
+        self.SendCommand(f'{setting}={value}')
         
         
 
@@ -183,64 +166,137 @@ class GRBLConection():
         
         
     def SendFile(self, filePath, mode):
-        import re
+        time.sleep(0.5)
         file = open(filePath, 'r')
         i = 0
-        if mode == 'Fast':
+        if mode == 'Fast':               # NONFUNCTIONAL
             linesCharactorCounts = []
             RX_BUFFER_SIZE = 128
             GCodeCount = 0
-            self.operationLenght = len(file)
             linesInBuffer = 0
             for line in file:
-                line = re.sub(r'\s|\(.*?\)', '', line).upper()
+                
+                line = re.sub(r'\s|\(.*?\)', '', line).upper().strip()
+                print(line)
                 linesCharactorCounts.append(len(line)+1)
-        
-                while sum(linesCharactorCounts) >= RX_BUFFER_SIZE - 1 or self.connection.in_Waiting():
+                print(f'charactorcount = {sum(linesCharactorCounts)}')
+                while sum(linesCharactorCounts) >= RX_BUFFER_SIZE - 1 or self.connection.in_waiting:
                     returnData = self.connection.readline().strip()
-                    if 'error' in returnData:
+                    print(returnData)
+                    if b'error' in returnData:
                         print(f'GRBL Reports Error on line {i-linesInBuffer}:   {returnData}')
                         return
                     else:
                         GCodeCount +=1
                         linesInBuffer -= 1
-                        del linesCharactorCounts[0]
+                        print(linesCharactorCounts)
+                        if linesCharactorCounts:
+                            del linesCharactorCounts[0]
                 i += 1
-                self.connection.write((line + '\n').encode())
+                self.SendCommand((line + '\n').encode())
                 linesInBuffer += 1
+                
+                
         if mode == 'Reliable':
+            self.requested = 0
+            self.receiveCounter = 0
             for line in file:
+                self.allowtransmit = False
+                print(line)
                 l = line.strip() # Strip all EOL characters for consistency
-                self.connection.write(l + '\n') # Send g-code block to grbl
-                grbl_out = self.connection.readline() # Wait for grbl response with carriage return
+                self.SendCommand(l + f' N{i}\n') # Send g-code block to grbl
+                self.requested += 1
+                while self.requested > self.receiveCounter:
+                    self.allowtransmit = True
+                    time.sleep(0.03)
                 i += 1
     
-    
-    
-    
-    
-    
-    
-    def Async(self, socketio, buffer):
+    def Async(self, buffer):
         self.Async=True
         while self.Async:
-            if buffer != []:
+            if buffer != [] and self.allowtransmit:
                 commands = buffer
+                
                 for command in commands:
+                    self.requested += 1
                     if command[0] == 'adjustSpindle':
-                        self.adjustSpindle(socketio, command[1])
+                        self.adjustSpindle(command[1])
                     elif command[0] == 'adjustFeed':
-                        self.adjustFeed(socketio, command[1])
+                        self.adjustFeed(command[1])
                     elif command[0] == 'SendCommand':
-                        self.SendCommand(command[1], socketio, command[2])
-                    elif command[0] == 'Jog':
-                        self.Jog(socketio, command[1], command[2], command[3], command[4])
+                        self.connection.write(command[1])
                     elif command[0] == 'StatusReport':
-                        self.StatusReport(socketio)
+                        self.SendCommand(b'?\n')
+                    elif command[0] == 'Jog':
+                        self.Jog(command[1][0], command[1][1], command[1][2], command[1][3])
                     elif command[0] == 'adjustRapid':
-                        self.adjustRapid(socketio, command[1])
+                        self.adjustRapid(command[1])
                     elif command[0] == 'GetGRBLSettings':
-                        self.GetGRBLSettings(socketio)
+                        self.requested += 33
+                        self.GetGRBLSettings()
                     elif command[0] == 'ChangeSetting':
-                        self.ChangeSetting(socketio, command[1], command[2])
+                        self.ChangeSetting(command[1][0], command[1][1])
+                    elif command[0] == 'StartOperation':
+                        self.status = 'Operating'
+                        self.filethread = threading.Thread(target=self.SendFile, args=(f'./OperationFiles/{command[1]}','Reliable'), daemon=True).start()
                     buffer.remove(command)
+            time.sleep(0.2)
+            
+        
+    def GetData(self):
+        self.receiveCounter = 0
+        while self.Async:
+            line = self.connection.readline().decode().strip()
+            if self.Async == False:
+                break
+            
+            self.SocketEmit('console', line)
+            self.receiveCounter += 1
+            if line.startswith('<') and line.endswith('>'):
+
+                self.StatusReportProcess(line)
+                
+            elif line.startswith('ok'):
+                self.okCount += 1 
+            
+            elif line.startswith('$') and '=' in line:
+                if 'N' not in line:
+                    self.processGRBLSettings(line)
+                else:
+                    data = line.replace('$N', '').split('=')
+                    self.startuplines[data[0]] = data[1]
+
+            elif line.startswith('error'):
+                print(f'GRBL reports an error: {line}')
+                
+            elif line.startswith('[') and line.endswith(']'):
+                
+                if 'MSG:' in line:
+                    self.receiveCounter -= 1
+                    print(f'GRBL sent a message: {line}')
+                    
+                elif 'GC:' in line:
+                    self.GcodeParserState = line.replace(']', '').replace('[GC:', '').split(' ')
+                
+                elif 'VER:' in line:
+                    self.Version = line.replace(':]', '').replace('[VER:', '')
+                elif 'OPT:' in line:
+                    self.OPT = line.replace(']', '').replace('[OPT:', '')
+                elif 'echo:' in line:
+                    self.receiveCounter -= 1
+                elif 'G54' in line or'G55' in line or'G56' in line or'G57' in line or'G58' in line or'G59' in line or'G28' in line or'G30' in line or'G92' in line or'TLO' in line or'PRB' in line:
+                    self.SP[line.split(':')[0].replace(':', '').replace('[', '')] = line.split(':')[1].replace(']', '').split(',')
+                    
+            elif line.startswith('ALARM'):
+                print(f'GRBL reports an alarm: {line}')
+                
+            elif line.startswith('>'):
+                self.receiveCounter -= 1
+                data = line.replace(">", '').split(':')
+                if data[1] != 'ok':
+                    print(f'Start line failed {data[0]}')
+                
+            elif line.startswith('Grbl'):
+                self.receiveCounter -= 1
+            if self.connection.in_waiting < 15:
+                time.sleep(0.05)
