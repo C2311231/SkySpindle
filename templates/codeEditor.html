@@ -1,0 +1,18 @@
+<script src="{{url_for('static', filename='src-min-noconflict/ace.js')}}"></script>
+<div class="element">
+    <div class="elementTitle">
+        <span>
+            <h3>File Editor</h3>
+        </span>
+    </div>
+    <div class="elementContent">
+        <div id='FileEditor' style="height: 40vh"></div>
+    </div>
+</div>
+<script>
+    ace.edit("FileEditor", {
+        theme: "ace/theme/twilight",
+        mode: "ace/mode/gcode",
+        value: ``
+    });
+</script>

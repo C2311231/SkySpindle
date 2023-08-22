@@ -27,17 +27,17 @@ class GRBLConection():
         self.triggeredPins = None
         self.accessoryState = None
         self.Mpos = [0, 0, 0]
+        self.Wpos = [0, 0, 0]
         self.SocketEmit = SendData
         self.okCount = 0
         self.receive = []
         self.settings = {}
         self.requested = 0
-        self.allowtransmit = True
+        self.status = 'Idle'
         
     def SendCommand(self, command):
         if isinstance(command, bytes):
             self.connection.write(command)
-            self.connection.write(str.encode('\n'))
         else:
             self.connection.write(str.encode(f"{command}\n"))
         
@@ -47,18 +47,18 @@ class GRBLConection():
         
     def processGRBLSettings(self, data):
         data = data.split('=') # Converts to a string then removes \r and confirmation from responses 
-        if data[0] not in self.settings:
-            self.settings[data[0]] = data[1]
+        
+        self.settings[data[0]] = data[1]
         
     def StatusReportProcess(self, response):
         response = response.replace('<', '').replace('>', '').split('|')
         for item in response:
             if 'Idle' in item or 'Run' in item or 'Hold' in item or 'Jog' in item or 'Alarm' in item or 'Door' in item or 'Check' in item or 'Home' in item or 'Sleep' in item:
                 if ':' in item:
-                    self.status, self.subStatus = item.split(':')
+                    self.Machinestatus, self.subStatus = item.split(':')
                     
                 else:
-                    self.status = item
+                    self.Machinestatus = item
                     self.subStatus = None
                     
             elif 'FS' in item:
@@ -103,60 +103,61 @@ class GRBLConection():
         
     def adjustSpindle(self, desired):
         if desired == '100':
-            self.SendCommand(b'\x99')
+            self.SendCommand(b'\x99\n')
         elif str(self.Ov[2]) == desired:
             return
         elif int(self.Ov[2]) < int(desired):
             iterations = int(desired) - int(self.Ov[2])
             for i in range(0, int(iterations/10)):
-                self.SendCommand(b'\x9A')
+                self.SendCommand(b'\x9A\n')
                 time.sleep(0.02)
             for i in range(0, int(iterations%10)):
-                self.SendCommand(b'\x9C')
+                self.SendCommand(b'\x9C\n')
                 time.sleep(0.02)
         else:
             iterations = int(self.Ov[2]) - int(desired)
             for i in range(0, int(iterations/10)):
-                self.SendCommand(b'\x9B')
+                self.SendCommand(b'\x9B\n')
                 time.sleep(0.02)
             for i in range(0, int(iterations%10)):
-                self.SendCommand(b'\x9D')
+                self.SendCommand(b'\x9D\n')
                 time.sleep(0.02)
                 
                 
     def adjustFeed(self, desired):
         if desired == '100':
-            self.SendCommand(b'\x90')
+            self.SendCommand(b'\x90\n')
         elif str(self.Ov[0]) == desired:
             return
         elif int(self.Ov[0]) < int(desired):
             iterations = int(desired) - int(self.Ov[0])
             for i in range(0, int(iterations/10)):
-                self.SendCommand(b'\x91')
+                self.SendCommand(b'\x91\n')
                 time.sleep(0.02)
             for i in range(0, int(iterations%10)):
-                self.SendCommand(b'\x93')
+                self.SendCommand(b'\x93\n')
                 time.sleep(0.02)
         else:
             iterations = int(self.Ov[0]) - int(desired)
             for i in range(0, int(iterations/10)):
-                self.SendCommand(b'\x92')
+                self.SendCommand(b'\x92\n')
                 time.sleep(0.02)
             for i in range(0, int(iterations%10)):
-                self.SendCommand(b'\x94')
+                self.SendCommand(b'\x94\n')
                 time.sleep(0.02)
                 
                 
     def adjustRapid(self, value):
         if value == '100':
-            self.SendCommand(b'\x95')
+            self.SendCommand(b'\x95\n')
         elif value == '50':
-            self.SendCommand(b'\x96')
+            self.SendCommand(b'\x96\n')
         else:
-            self.SendCommand(b'\x97')
+            self.SendCommand(b'\x97\n')
             
             
     def ChangeSetting(self, setting, value):
+        print(f'{setting}={value}')
         self.SendCommand(f'{setting}={value}')
         
         
@@ -165,95 +166,110 @@ class GRBLConection():
         self.Async=False
         
         
-    def SendFile(self, filePath, mode):
-        time.sleep(0.5)
+    def SendFile(self, filePath, mode, buffer):
+        self.status = 'Operating'
         file = open(filePath, 'r')
-        i = 0
+        i = 1
         if mode == 'Fast':               # NONFUNCTIONAL
             linesCharactorCounts = []
-            RX_BUFFER_SIZE = 128
+            RX_BUFFER_SIZE = 100
             GCodeCount = 0
             linesInBuffer = 0
             for line in file:
-                
+                self.Async = False
                 line = re.sub(r'\s|\(.*?\)', '', line).upper().strip()
-                print(line)
+                line = line +f'N{i}'
+                # print(line)
                 linesCharactorCounts.append(len(line)+1)
                 print(f'charactorcount = {sum(linesCharactorCounts)}')
                 while sum(linesCharactorCounts) >= RX_BUFFER_SIZE - 1 or self.connection.in_waiting:
-                    returnData = self.connection.readline().strip()
-                    print(returnData)
-                    if b'error' in returnData:
+                    returnData = self.connection.readline().decode()
+                    print('recived ' + returnData)
+                    returnData = returnData.strip()
+                    if 'error' in returnData:
                         print(f'GRBL Reports Error on line {i-linesInBuffer}:   {returnData}')
                         return
-                    else:
+                    elif 'echo' not in line:
                         GCodeCount +=1
                         linesInBuffer -= 1
-                        print(linesCharactorCounts)
                         if linesCharactorCounts:
                             del linesCharactorCounts[0]
-                i += 1
-                self.SendCommand((line + '\n').encode())
+                
+                self.connection.write((line + '\n').encode())
                 linesInBuffer += 1
+                i += 1
                 
                 
         if mode == 'Reliable':
+            self.notSending = False
+            time.sleep(3)
             self.requested = 0
-            self.receiveCounter = 0
+            self.okCount = 0
             for line in file:
-                self.allowtransmit = False
-                print(line)
+                self.notSending = False
                 l = line.strip() # Strip all EOL characters for consistency
-                self.SendCommand(l + f' N{i}\n') # Send g-code block to grbl
+                buffer.append(["FileCommand", (l + f' N{i}\n').encode()]) # Send g-code block to grbl
                 self.requested += 1
-                while self.requested > self.receiveCounter:
-                    self.allowtransmit = True
-                    time.sleep(0.03)
+                while self.requested > self.okCount:
+                    self.notSending = True
+                    time.sleep(0.3)
                 i += 1
-    
+                
+        self.status = 'Idle'
     def Async(self, buffer):
         self.Async=True
+        self.notSending = True
+        self.lastPosTime = time.time()
         while self.Async:
-            if buffer != [] and self.allowtransmit:
-                commands = buffer
-                
-                for command in commands:
-                    self.requested += 1
-                    if command[0] == 'adjustSpindle':
-                        self.adjustSpindle(command[1])
-                    elif command[0] == 'adjustFeed':
-                        self.adjustFeed(command[1])
-                    elif command[0] == 'SendCommand':
-                        self.connection.write(command[1])
-                    elif command[0] == 'StatusReport':
-                        self.SendCommand(b'?\n')
-                    elif command[0] == 'Jog':
-                        self.Jog(command[1][0], command[1][1], command[1][2], command[1][3])
-                    elif command[0] == 'adjustRapid':
-                        self.adjustRapid(command[1])
-                    elif command[0] == 'GetGRBLSettings':
-                        self.requested += 33
-                        self.GetGRBLSettings()
-                    elif command[0] == 'ChangeSetting':
-                        self.ChangeSetting(command[1][0], command[1][1])
-                    elif command[0] == 'StartOperation':
-                        self.status = 'Operating'
-                        self.filethread = threading.Thread(target=self.SendFile, args=(f'./OperationFiles/{command[1]}','Reliable'), daemon=True).start()
-                    buffer.remove(command)
+            if self.notSending:
+                if time.time() - 0.3 > self.lastPosTime:
+                    self.SendCommand(b'?')
+                    self.lastPosTime = time.time()
+                self.prossesSend(buffer)
             time.sleep(0.2)
             
+            
+    def prossesSend(self, buffer):       
+        if buffer != []:
+            commands = buffer
+            for command in commands:
+                self.requested += 1
+                if command[0] == 'adjustSpindle':
+                    self.adjustSpindle(command[1])
+                elif command[0] == 'FileCommand':
+                    self.requested -= 1
+                    self.SendCommand(command[1])
+                elif command[0] == 'adjustFeed':
+                    self.adjustFeed(command[1])
+                elif command[0] == 'SendCommand':
+                    self.SendCommand(command[1][0])
+                elif command[0] == 'StatusReport':
+                    self.requested -= 1
+                    self.SendCommand(b'?')
+                elif command[0] == 'Jog':
+                    self.Jog(command[1][0], command[1][1], command[1][2], command[1][3])
+                elif command[0] == 'adjustRapid':
+                    self.adjustRapid(command[1])
+                elif command[0] == 'GetGRBLSettings':
+                    if self.status == 'Idle':
+                        self.requested -= 1
+                        self.GetGRBLSettings()
+                elif command[0] == 'ChangeSetting':
+                    self.ChangeSetting(command[1][0], command[1][1])
+                elif command[0] == 'StartOperation':
+                    self.requested -= 1
+                    if self.status == 'Idle':
+                        thread = threading.Thread(target=self.SendFile, args=(f'./OperationFiles/{command[1]}','Reliable', buffer), daemon=True)
+                        thread.start()
+                buffer.remove(command)
         
     def GetData(self):
-        self.receiveCounter = 0
         while self.Async:
             line = self.connection.readline().decode().strip()
             if self.Async == False:
                 break
-            
             self.SocketEmit('console', line)
-            self.receiveCounter += 1
             if line.startswith('<') and line.endswith('>'):
-
                 self.StatusReportProcess(line)
                 
             elif line.startswith('ok'):
@@ -272,7 +288,6 @@ class GRBLConection():
             elif line.startswith('[') and line.endswith(']'):
                 
                 if 'MSG:' in line:
-                    self.receiveCounter -= 1
                     print(f'GRBL sent a message: {line}')
                     
                 elif 'GC:' in line:
@@ -283,7 +298,7 @@ class GRBLConection():
                 elif 'OPT:' in line:
                     self.OPT = line.replace(']', '').replace('[OPT:', '')
                 elif 'echo:' in line:
-                    self.receiveCounter -= 1
+                    print(line)
                 elif 'G54' in line or'G55' in line or'G56' in line or'G57' in line or'G58' in line or'G59' in line or'G28' in line or'G30' in line or'G92' in line or'TLO' in line or'PRB' in line:
                     self.SP[line.split(':')[0].replace(':', '').replace('[', '')] = line.split(':')[1].replace(']', '').split(',')
                     
@@ -291,12 +306,11 @@ class GRBLConection():
                 print(f'GRBL reports an alarm: {line}')
                 
             elif line.startswith('>'):
-                self.receiveCounter -= 1
                 data = line.replace(">", '').split(':')
                 if data[1] != 'ok':
                     print(f'Start line failed {data[0]}')
                 
             elif line.startswith('Grbl'):
-                self.receiveCounter -= 1
+                pass
             if self.connection.in_waiting < 15:
                 time.sleep(0.05)

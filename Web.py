@@ -56,7 +56,8 @@ def filr(data):
 @scheduler.task('interval', id='GetSettings', seconds=5, max_instances=5)
 def SendPositionData():
     OPERATIONS = os.listdir('./OperationFiles')
-    GRBL_COMMAND_BUFFER.append(['GetGRBLSettings'])
+    if GRBL.status == 'Idle':
+        GRBL_COMMAND_BUFFER.append(['GetGRBLSettings'])
     socketio.emit('settings', GRBL.settings)
     socketio.emit('State', State)
     socketio.emit('operations', OPERATIONS)
@@ -64,8 +65,8 @@ def SendPositionData():
 
 @scheduler.task('interval', id='GetPos', seconds=0.3, max_instances=5)
 def SendPositionData():
-    GRBL_COMMAND_BUFFER.append(['StatusReport'])
-    socketio.emit('position', GRBL.Mpos)
+    socketio.emit('positionM', GRBL.Mpos)
+    socketio.emit('positionW', GRBL.Wpos)
     
 @socketio.on('SpindleOveride')
 def filr(data):
@@ -96,7 +97,7 @@ def Connect(data):
     
 @socketio.on('Disconnect')
 def Disconnect():
-    GRBL.stop_threads()
+    GRBL.stop_thread()
     GRBLthread1.join()
     GRBLthread2.join()
     GRBL.connection.close()
