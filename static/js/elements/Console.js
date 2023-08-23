@@ -10,7 +10,7 @@ window.socket.on('console', function (data) {
     // Create a new console item
     const consoleItem = document.createElement('div');
     consoleItem.classList.add('consoleitem');
-    consoleItem.innerHTML = `<h5>${htmlEscape(data)}</h5>`;
+    consoleItem.innerHTML = `<h5 class='${data.class}'>${htmlEscape(data.data)}</h5>`;
     
     // Insert the new console item at the beginning of the container
     grblconsole.insertBefore(consoleItem, grblconsole.firstChild);

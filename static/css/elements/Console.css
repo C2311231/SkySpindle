@@ -28,14 +28,21 @@
  .consoleitem {
      border-style:hidden;
  }
- .user {
-     color: rgb(255, 255, 255);
+ .userSent {
+     color: rgb(5, 8, 201);
  }
- .recive, .systemsent {
-     color: gray;
- }
+ 
  .consoleitem h5 {
      margin: auto;
      padding: 5px;
      margin-left: 20px;
  }
+ .reciveError {
+    color: red;
+ }
+ .systemsent {
+    color: rgba(128, 128, 128, 0.486);
+}
+.recive {
+    color: gray;
+}

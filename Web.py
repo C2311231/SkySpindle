@@ -41,17 +41,17 @@ def fil(data):
     
 @socketio.on('sendconsole')
 def fili(data):
-    GRBL_COMMAND_BUFFER.append(['SendCommand', [data, 'user']])
+    GRBL_COMMAND_BUFFER.append(['SendCommand', [data]])
     
     
 @socketio.on('home')
 def homeAxis(data):
-    GRBL_COMMAND_BUFFER.append(['SendCommand', [f'$H{data}', 'systemsent']])
+    GRBL_COMMAND_BUFFER.append(['Home', [data]])
     
 
 @socketio.on('spindle')
 def toggleSpindle(data):
-    GRBL_COMMAND_BUFFER.append(['SendCommand', [f'M03 S{data}', 'systemsent']])
+    GRBL_COMMAND_BUFFER.append(['SpindleControl', [data]])
     
 @scheduler.task('interval', id='SlowUpdate', seconds=5, max_instances=1)
 def SlowUpdate():

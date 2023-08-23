@@ -15,7 +15,7 @@ dropArea.addEventListener('dragover', event => {
 // Handle file drop
 dropArea.addEventListener('drop', event => {
     event.preventDefault();
-    dropArea.style.border = '2px dashed #ccc';
+    dropArea.style.border = 'none';
 
     const files = event.dataTransfer.files;
     for (var i = 0; i < files.length; i++) {

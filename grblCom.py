@@ -37,10 +37,13 @@ class GRBLConection():
         self.subStatus = None
         self.Machinestatus = None
         
-    def SendCommand(self, command):
+    def SendCommand(self, command, Class='systemsent'):
+        
         if isinstance(command, bytes):
+            self.SocketEmit('console', {'data': command.decode(), 'class': Class})
             self.connection.write(command)
         else:
+            self.SocketEmit('console', {'data': command, 'class': Class})
             self.connection.write(str.encode(f"{command}\n"))
         
         
@@ -181,7 +184,6 @@ class GRBLConection():
                 self.Async = False
                 line = re.sub(r'\s|\(.*?\)', '', line).upper().strip()
                 line = line +f'N{i}'
-                # print(line)
                 linesCharactorCounts.append(len(line)+1)
                 print(f'charactorcount = {sum(linesCharactorCounts)}')
                 while sum(linesCharactorCounts) >= RX_BUFFER_SIZE - 1 or self.connection.in_waiting:
@@ -243,7 +245,7 @@ class GRBLConection():
                 elif command[0] == 'adjustFeed':
                     self.adjustFeed(command[1])
                 elif command[0] == 'SendCommand':
-                    self.SendCommand(command[1][0])
+                    self.SendCommand(command[1][0], 'userSent')
                 elif command[0] == 'StatusReport':
                     self.requested -= 1
                     self.SendCommand(b'?')
@@ -262,6 +264,10 @@ class GRBLConection():
                     if self.status == 'Idle':
                         thread = threading.Thread(target=self.SendFile, args=(f'./OperationFiles/{command[1]}','Reliable', buffer), daemon=True)
                         thread.start()
+                elif command[0] == 'Home':
+                     self.SendCommand(f'$H{command[1][0]}')
+                elif command[0] == 'SpindleControl':
+                     self.SendCommand(f'M03 S{command[1][0]}')
                 buffer.remove(command)
         
     def GetData(self):
@@ -269,7 +275,14 @@ class GRBLConection():
             line = self.connection.readline().decode().strip()
             if self.Async == False:
                 break
-            self.SocketEmit('console', line)
+            
+            if line.startswith('error') == False:
+                self.SocketEmit('console', {'data': line, 'class': 'recive'})
+            
+            else:
+                self.SocketEmit('console', {'data': line, 'class': 'reciveError'})
+                print(f'GRBL reports an error: {line}')
+            
             if line.startswith('<') and line.endswith('>'):
                 self.StatusReportProcess(line)
                 
@@ -282,9 +295,6 @@ class GRBLConection():
                 else:
                     data = line.replace('$N', '').split('=')
                     self.startuplines[data[0]] = data[1]
-
-            elif line.startswith('error'):
-                print(f'GRBL reports an error: {line}')
                 
             elif line.startswith('[') and line.endswith(']'):
                 
