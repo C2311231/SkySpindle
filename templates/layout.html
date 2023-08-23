@@ -10,11 +10,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="{{url_for('static', filename='SkySpindleLogo.svg')}}">
 </head>
-
+<script src="/static/js/SocketIo.js"></script>
+<script>window.socket = io();</script>
 <body>
     <div class="overlay" id="overlay"></div>
     {% include 'navBar.html' %}
-    {% include 'MachineSettings.html' %}
+    {% include 'MSettings.html' %}
     <div class="pageContent">
         
         <div id="columnsm">
@@ -24,17 +25,13 @@
         <div id="columnlg">
             
             {% include 'Operations.html' %}
-            {% include 'Machine.html'%}
+            {% include 'JogSettings.html'%}
         </div>
         <div id="columnmd">
             {% include 'codeEditor.html'%}
             {% include 'Console.html'%}
         </div>
     </div>
-    <link rel="stylesheet" href="/static/dark.min.css">
-    <script src="/static/js/highlight.min.js"></script>
-
-    <script>hljs.highlightAll();</script>
 
     <script type="module" src="{{url_for('static', filename='js/main.mjs')}}"></script>
 </body>

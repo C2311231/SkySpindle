@@ -10,9 +10,11 @@
     box-sizing: border-box;
     display: flex;
 }
+
 body {
     margin: 0;
 }
+
 .element {
     color: lightgray;
     background-color: #1e1e1e;
@@ -21,86 +23,33 @@ body {
     margin: 10px;
     border-radius: 3px;
 }
+
 .elementTitle {
     background-color: #272727;
     border-radius: 3px 3px 0px 0px;
-    align-items:center;
+    align-items: center;
     display: flex;
     justify-content: left;
     padding: 0px 20px 0px 20px;
     height: 5vh;
 }
+
 #columnsm {
     height: 100%;
     width: 25%;
 }
+
 #columnlg {
     height: 100%;
     width: 45%;
 }
+
 #columnmd {
     height: 100%;
     width: 30%;
 }
 
-.JogControl {
-    position: relative;
-    padding: 0;
-    max-width: 200px;
-    aspect-ratio: 1/0.8;
-    grid-column: 1;
-    
-}
-.JogBtnL {
-    position: absolute;
-    top: 50%;
-    left: 10%;
-    transform: translate(0, -50%);
-}
-.JogBtnR {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(0, -50%);
-}
-.JogBtnU {
-    position: absolute;
-    top: 30%;
-    left: 30%;
-    transform: translate(0, -50%);
-}
-.JogBtnD {
-    position: absolute;
-    top: 70%;
-    left: 30%;
-    transform: translate(0, -50%);
-    
-}
 
-.JogBtnUp {
-    position: absolute;
-    top: 30%;
-    left: 80%;
-    transform: translate(0, -50%);
-}
-.JogBtnDown {
-    position: absolute;
-    top: 70%;
-    left: 80%;
-    transform: translate(0, -50%);
-}
-.JogBtn, button {
-    background-color: #272727;
-    border-radius: 5px;
-    padding: 5px;
-    border-width: 1px;
-    border-color: black;
-    outline: none;
-    border-style: groove;
-}
-.JogBtn:active, button:active{
-    background-color: black;
-}
 
 @media (min-width:751px) and (max-width: 1900px) {
     #columnsm {
@@ -108,40 +57,48 @@ body {
         width: 50% !important;
         float: left;
     }
+
     #columnlg {
         height: fit-content;
         width: 100% !important;
     }
+
     #columnmd {
         height: fit-content;
         width: 50% !important;
         float: right;
     }
+
     .pageContent {
-        display:flex;
+        display: flex;
         padding-left: 2px;
         padding-right: 2px;
         padding-top: 2px;
     }
+
     .element {
         margin: 2px;
     }
 }
+
 @media (min-width:1px) and (max-width: 750px) {
     #columnsm {
         height: fit-content;
         width: 100%;
     }
+
     #columnlg {
         height: fit-content;
         width: 100%;
     }
+
     #columnmd {
         height: fit-content;
         width: 100%;
     }
+
     .pageContent {
-        display:block;
+        display: block;
         padding-left: 5px;
         padding-right: 5px;
         padding-top: 5px;
@@ -153,273 +110,48 @@ body {
     grid-template-columns: 100%;
 }
 
-.homeBtn {
-    background-color: #fb8c00;
-    border-radius: 5px;
-    padding: 5px;
-    box-sizing: border-box;
-    width: auto;
-    border: None;
-    margin: 3px;
-    color: white;
-}
-
-.homing {
-    margin: auto;
-    width: 100%;
-    display: grid;
-    padding: 0;
-    grid-template-columns: 100%;
-    grid-column: 2;
-}
-.homeBtn:active {
-    background-color: #121212;
-}
-.homingmulti {
-    display: grid;
-    grid-template-columns: 50% 50% !important;
-}
-.homingsingle {
-    display: grid;
-    grid-template-columns: 33.333333% 33.333333% 33.333333%;
-}
-.hAll{
-    border-radius: 5px 0px 0px 0px !important;
-}
-.hXY{
-    border-radius: 0px 5px 0px 0px !important;
-}
-.controlSection {
-    width: 100%;
-    display: grid;
-    grid-template-columns: 50% 35% 15%;
-}
-
-.slidecontainer {
-    width: 80%;
-    margin: auto;
-    padding: 5px;
-}
-
 input[type=number] {
     -moz-appearance: textfield;
 }
+
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-.PosInput {
-    margin: auto;
-    width: fit-content;
-    text-align: center;
-
-}
-.position {
-    display: grid;
-    grid-template-columns: 33.33% 33.33% 33.33%;
-    place-items: center;
-    width: 100%;
-    margin-top: 0px;
+    -webkit-appearance: none;
+    margin: 0;
 }
 
-.PosInput .X {
-    grid-column: 1;
+.JogBtn,
+button {
+    background-color: #272727;
+    border-radius: 5px;
+    padding: 5px;
+    border-width: 1px;
+    border-color: black;
+    outline: none;
+    border-style: groove;
 }
-.PosInput .Y {
-    grid-column: 2;
-}
-.PosInput .Z {
-    grid-column: 3;
-}
-.PosInput input, span input, .machineOption input, td input {
+
+.PosInput input,
+span input,
+.machineOption input,
+td input {
     width: 50%;
     margin: auto;
     padding: 5px;
     text-align: right;
     background-color: #272727;
     border-radius: 5px;
-    border-style:groove;
+    border-style: groove;
     border-width: 1px;
     border-color: black;
     color: gray;
     outline: none;
 }
 
-.JogSliderLabel{
-    margin-right: 15px;
-    float: right;
-}
-
-.JogSlider span {
-    margin: 15px;
-
-}
-.slider {
-    width: 100%;
-    margin: auto;
-}
-.inputcommand {
-   resize: none;
-   margin: 10px;
-   color: white;
-   background-color: #121212;
-   border-radius: 5px;
-   border-style: groove;
-}
-.commandInput {
-    width: 95%;
-    display: grid;
-    grid-template-columns: 80% 20%;
-    margin: auto;
-    margin-top: 5px;
-}
-.SubmitBtn {
-    color: gray;
-}
-.Consolelist {
-    display: grid;
-    margin: 5px;
-    grid-template-columns: 100%;
-    height: 30vh;
-    align-content: baseline;
-    overflow: auto;
-
-}
-.consoleitem {
-    border-style:hidden;
-}
-.user {
-    color: rgb(255, 255, 255);
-}
-.recive, .systemsent {
-    color: gray;
-}
-.consoleitem h5 {
-    margin: auto;
-    padding: 5px;
-    margin-left: 20px;
-}
-.machineSection {
-    display: grid;
-    grid-template-columns: 50% 50%;
-}
-
-.machineOption, .FalseMachineOption {
-    height: auto;
-    margin: auto;
-    display: grid;
-    grid-template-columns: 50% 50%;
-    padding: 5px;
-}
- 
-.machineOption input, .FalseMachineOption input {
-    height: 50%;
-    margin-top: auto;
-    margin-bottom: auto;
-}
-.machineOption p, .FalseMachineOption p {
-    padding-left: 15px;
-}
 hr {
     width: 90%;
     max-height: 1px;
 
-}
-
-.spindleToggle {
-    display: grid;
-    grid-template-columns: 100%;
-    height: 50%;
-    margin: auto;
-}
-
-.list {
-    display: flex;
-    height: 30vh;
-    overflow: auto;
-    border-style: hidden;
-    flex-direction: column;
-    
-}
-
-.listItem {
-    padding: 10px;
-    margin-left: 40px;
-}
-.list h2 {
-    margin-left: 30px;
-}
-.CycleStart {
-    float: right;
-    margin-right: 50px;
-}
-
-#PortDropDown {
-    background-color: #121212;
-    color:white;
-    margin: 15px;
-}
-.label {
-    margin: 15px;
-    margin-bottom: 5px;
-}
-#connectBTN {
-    margin: 15px;
-    color: white;
-    background-color: #24f05060;
-}
-#disconectBTN {
-    margin: 15px;
-    color: white;
-    background-color: #f0242460;
-    display: none;
-}
-
-.floatingMenu {
-    position: fixed;
-    z-index: 10;
-    top: 10vh;
-    left: 10vw;
-    width: 80vw;
-    height: 80vh;
-    margin: 0;
-    border-radius: 40px;
-    display: none;
-}
-.SettingLabel {
-    width: 16px !important;
-}
-
-.floatingMenu .elementContent {
-    width: 100%;
-    height: 90%;
-    overflow: auto;
-}
-
-.overlay {
-    z-index: 2;
-    position: fixed;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: none;
-}
-
-.closeBtn {
-    justify-content: flex-end !important;
-    margin-left: auto;
-    text-align: right;
-}
-
-.floatingMenu .elementContent table {
-    padding: 15px;
-}
-td{
-    padding: 10px;
-}
-.machineSetting {
-    width: 100% !important;
 }
 
 h6 {
@@ -428,11 +160,4 @@ h6 {
     margin-left: auto;
     margin-right: 10px;
     color: gray;
-}
-
-.ABSPOS {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    margin-top: 2vh;
 }

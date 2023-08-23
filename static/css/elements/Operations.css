@@ -1,0 +1,20 @@
+.list {
+    display: flex;
+    height: 30vh;
+    overflow: auto;
+    border-style: hidden;
+    flex-direction: column;
+    
+}
+
+.listItem {
+    padding: 10px;
+    margin-left: 40px;
+}
+.list h2 {
+    margin-left: 30px;
+}
+.CycleStart {
+    float: right;
+    margin-right: 50px;
+}

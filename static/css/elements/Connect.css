@@ -1,0 +1,21 @@
+#connectBTN {
+    margin: 15px;
+    color: white;
+    background-color: #24f05060;
+}
+#disconectBTN {
+    margin: 15px;
+    color: white;
+    background-color: #f0242460;
+    display: none;
+}
+.label {
+    margin: 15px;
+    margin-bottom: 5px;
+}
+
+#PortDropDown {
+    background-color: #121212;
+    color:white;
+    margin: 15px;
+}

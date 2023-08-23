@@ -1,0 +1,65 @@
+.floatingMenu {
+    position: fixed;
+    z-index: 10;
+    top: 10vh;
+    left: 10vw;
+    width: 80vw;
+    height: 80vh;
+    margin: 0;
+    border-radius: 40px;
+    display: none;
+}
+.SettingLabel {
+    width: 16px !important;
+}
+
+.floatingMenu .elementContent {
+    width: 100%;
+    height: 90%;
+    overflow: auto;
+}
+
+.overlay {
+    z-index: 2;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+}
+
+.closeBtn {
+    justify-content: flex-end !important;
+    margin-left: auto;
+    text-align: right;
+}
+
+.floatingMenu .elementContent table {
+    padding: 15px;
+}
+td{
+    padding: 10px;
+}
+.machineSetting {
+    width: 100% !important;
+}
+.machineOption p, .FalseMachineOption p {
+    padding-left: 15px;
+}
+.machineOption input, .FalseMachineOption input {
+    height: 50%;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+.machineSection {
+    display: grid;
+    grid-template-columns: 50% 50%;
+}
+
+.machineOption, .FalseMachineOption {
+    height: auto;
+    margin: auto;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    padding: 5px;
+}
