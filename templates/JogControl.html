@@ -5,18 +5,18 @@
         </span>
     </div>
     <div class="elementContent">
-        <div class="position">
+        <div class="spaceEven">
             <div class="ABSPOS">
-                <h6 id="MXpos">X |0|</h6>
+                <h6 id="MXpos" title="Reset Zero X">X |0|</h6>
             </div>
             <div class="ABSPOS">
-                <h6 id="MYpos">Y |0|</h6>            
+                <h6 id="MYpos" title="Reset Zero Y">Y |0|</h6>            
             </div>
             <div class="ABSPOS">
-                <h6 id="MZpos">Z |0|</h6>            
+                <h6 id="MZpos" title="Reset Zero Z">Z |0|</h6>            
             </div>
         </div>
-        <div class="position">
+        <div class="spaceEven">
             <div class="PosInput X">
                 <label>X</label>
                 <input step="0.01" type="number" value="0.00" id="Xpos">
@@ -92,6 +92,11 @@
                 <button class="homeBtn" id="SpindleOn"><b>Spindle On</b></button>
                 <button class="homeBtn" id="SpindleOff"><b>Spindle Off</b></button>
             </div>
+        </div>
+        <div class="spaceEven">
+            <button class="defaultbtn" id=""><b>Reset Zero</b></button>
+            <button class="defaultbtn" id=""><b>Toggle Mist</b></button>
+            <button class="defaultbtn" id=""><b>Toggle Flood</b></button>
         </div>
         <hr>
         <div class="JogSlider">

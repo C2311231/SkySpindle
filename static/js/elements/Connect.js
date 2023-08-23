@@ -1,10 +1,12 @@
 
 // Vars 
 
-var Disconect = document.getElementById('disconectBTN');
-var Connect = document.getElementById('connectBTN');
-var Port = document.getElementById('PortDropDown');
-var Portlabel = document.getElementById('portLabel');
+const Disconect = document.getElementById('disconectBTN');
+const Connect = document.getElementById('connectBTN');
+const Port = document.getElementById('PortDropDown');
+const Portlabel = document.getElementById('portLabel');
+const GrblStatus = document.getElementById('GrblStatus');
+
 
 function ConnectUpdate() {
     Connect.style.display = 'none';
@@ -42,4 +44,8 @@ window.socket.on('State', function (data) {
     else if (data == 'Connected') {
         ConnectUpdate();
     }
+});
+
+window.socket.on('Machine Status', function (data) {
+    GrblStatus.innerText = data;
 });

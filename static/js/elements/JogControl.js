@@ -29,7 +29,7 @@ const JogVDown = document.getElementsByClassName('JogBtnDown');
 
 const SpindleOn = document.getElementById('SpindleOn');
 const SpindleOff = document.getElementById('SpindleOff');
-const SpindleSpeed = document.getElementById('Spindle');
+
 
 const MXpos = document.getElementById('MXpos');
 const MYpos = document.getElementById('MYpos');
@@ -165,32 +165,32 @@ window.socket.on('positionM', function (data) {
 
 for (var i = 0; i < JogLeft.length; i++) {
     JogLeft[i].addEventListener("click", function () {
-        window.socket.emit('Jog', { x: -(JogDis.value), y: 0, z: 0 });
+        window.socket.emit('Jog', { x: -(JogDis.value), y: 0, z: 0, f: window.feedrate});
     });
 }
 for (var i = 0; i < JogRight.length; i++) {
     JogRight[i].addEventListener("click", function () {
-        window.socket.emit('Jog', { x: JogDis.value, y: 0, z: 0 });
+        window.socket.emit('Jog', { x: JogDis.value, y: 0, z: 0, f: window.feedrate});
     });
 }
 for (var i = 0; i < JogUp.length; i++) {
     JogUp[i].addEventListener("click", function () {
-        window.socket.emit('Jog', { x: 0, y: JogDis.value, z: 0 });
+        window.socket.emit('Jog', { x: 0, y: JogDis.value, z: 0, f: window.feedrate});
     });
 }
 for (var i = 0; i < JogDown.length; i++) {
     JogDown[i].addEventListener("click", function () {
-        window.socket.emit('Jog', { x: 0, y: -(JogDis.value), z: 0 });
+        window.socket.emit('Jog', { x: 0, y: -(JogDis.value), z: 0, f: window.feedrate});
     });
 }
 for (var i = 0; i < JogVUp.length; i++) {
     JogVUp[i].addEventListener("click", function () {
-        window.socket.emit('Jog', { x: 0, y: 0, z: JogDis.value });
+        window.socket.emit('Jog', { x: 0, y: 0, z: JogDis.value, f: window.feedrate});
     });
 }
 for (var i = 0; i < JogVDown.length; i++) {
     JogVDown[i].addEventListener("click", function () {
-        window.socket.emit('Jog', { x: 0, y: 0, z: -(JogDis.value) });
+        window.socket.emit('Jog', { x: 0, y: 0, z: -(JogDis.value), f: window.feedrate});
     });
 }
 
@@ -203,4 +203,4 @@ HomeZ.addEventListener('click', function () { window.socket.emit('home', 'Z') })
 
 
 SpindleOff.addEventListener('click', function () { window.socket.emit('spindle', '0') });
-SpindleOn.addEventListener('click', function () { window.socket.emit('spindle', SpindleSpeed.value) });
+SpindleOn.addEventListener('click', function () { window.socket.emit('spindle', window.spindlespeed) });

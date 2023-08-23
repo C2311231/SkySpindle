@@ -1,4 +1,4 @@
-var operations = document.getElementById('operations');
+const operations = document.getElementById('operations');
 
 window.socket.on('operations', function (data) {
     operations.innerHTML = `<h2>Saved cycles:</h2><hr>`;

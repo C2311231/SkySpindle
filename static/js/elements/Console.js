@@ -1,6 +1,6 @@
-var SendConsole = document.getElementById('consolesend')
-var ConsoleInput = document.getElementById('consoleinput')
-var grblconsole = document.getElementById('Consolelist');
+const SendConsole = document.getElementById('consolesend')
+const ConsoleInput = document.getElementById('consoleinput')
+const grblconsole = document.getElementById('Consolelist');
 
 
 

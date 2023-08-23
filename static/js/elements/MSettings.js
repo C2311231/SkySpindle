@@ -1,11 +1,11 @@
 
 // Vars
 
-var machineSetting = document.getElementsByClassName('machineSetting')
-var CloseMachineSettings = document.getElementById('CloseMachineSettings');
-var MachineSettings = document.getElementById('MachineSettings');
-var OpenMachineSettings = document.getElementById('OpenMachineSettings');
-var overlay = document.getElementById('overlay');
+const machineSetting = document.getElementsByClassName('machineSetting')
+const CloseMachineSettings = document.getElementById('CloseMachineSettings');
+const MachineSettings = document.getElementById('MachineSettings');
+const OpenMachineSettings = document.getElementById('OpenMachineSettings');
+const overlay = document.getElementById('overlay');
 
 //UI Logic
 CloseMachineSettings.onclick = function () {

@@ -36,7 +36,7 @@ def home():
 
 @socketio.on('Jog')
 def fil(data):
-    GRBL_COMMAND_BUFFER.append(['Jog', [data['x'], data['y'], data['z'], 1000]])
+    GRBL_COMMAND_BUFFER.append(['Jog', [data['x'], data['y'], data['z'], data['f']]])
     
     
 @socketio.on('sendconsole')
@@ -45,28 +45,35 @@ def fili(data):
     
     
 @socketio.on('home')
-def file(data):
+def homeAxis(data):
     GRBL_COMMAND_BUFFER.append(['SendCommand', [f'$H{data}', 'systemsent']])
     
 
 @socketio.on('spindle')
-def filr(data):
+def toggleSpindle(data):
     GRBL_COMMAND_BUFFER.append(['SendCommand', [f'M03 S{data}', 'systemsent']])
     
-@scheduler.task('interval', id='GetSettings', seconds=5, max_instances=5)
-def SendPositionData():
+@scheduler.task('interval', id='SlowUpdate', seconds=5, max_instances=1)
+def SlowUpdate():
     OPERATIONS = os.listdir('./OperationFiles')
-    if GRBL.status == 'Idle':
-        GRBL_COMMAND_BUFFER.append(['GetGRBLSettings'])
     socketio.emit('settings', GRBL.settings)
     socketio.emit('State', State)
     socketio.emit('operations', OPERATIONS)
 
 
+@scheduler.task('interval', id='GetSettings', seconds=20, max_instances=1)
+def UpdateSettings():
+    if GRBL.status == 'Idle':
+        GRBL_COMMAND_BUFFER.append(['GetGRBLSettings'])
+
 @scheduler.task('interval', id='GetPos', seconds=0.3, max_instances=5)
 def SendPositionData():
     socketio.emit('positionM', GRBL.Mpos)
     socketio.emit('positionW', GRBL.Wpos)
+    if GRBL.subStatus:
+        socketio.emit('Machine Status', f'Status: {GRBL.Machinestatus}:{GRBL.subStatus}')
+    else:
+        socketio.emit('Machine Status', f'Status: {GRBL.Machinestatus}')
     
 @socketio.on('SpindleOveride')
 def filr(data):
@@ -135,10 +142,6 @@ def upload_file():
 
 def SendData(Name, data):
     socketio.emit(Name, data)
-
-
-
-
 
 if __name__ == "__main__":
     scheduler.start()

@@ -34,6 +34,8 @@ class GRBLConection():
         self.settings = {}
         self.requested = 0
         self.status = 'Idle'
+        self.subStatus = None
+        self.Machinestatus = None
         
     def SendCommand(self, command):
         if isinstance(command, bytes):
@@ -202,7 +204,6 @@ class GRBLConection():
                 
         if mode == 'Reliable':
             self.notSending = False
-            time.sleep(3)
             self.requested = 0
             self.okCount = 0
             for line in file:
@@ -298,7 +299,7 @@ class GRBLConection():
                 elif 'OPT:' in line:
                     self.OPT = line.replace(']', '').replace('[OPT:', '')
                 elif 'echo:' in line:
-                    print(line)
+                    pass
                 elif 'G54' in line or'G55' in line or'G56' in line or'G57' in line or'G58' in line or'G59' in line or'G28' in line or'G30' in line or'G92' in line or'TLO' in line or'PRB' in line:
                     self.SP[line.split(':')[0].replace(':', '').replace('[', '')] = line.split(':')[1].replace(']', '').split(',')
                     

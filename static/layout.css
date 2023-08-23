@@ -120,7 +120,6 @@ input::-webkit-inner-spin-button {
     margin: 0;
 }
 
-.JogBtn,
 button {
     background-color: #272727;
     border-radius: 5px;
@@ -129,12 +128,12 @@ button {
     border-color: black;
     outline: none;
     border-style: groove;
+    color: gray;
 }
 
 .PosInput input,
 span input,
-.machineOption input,
-td input {
+.machineOption input, td input {
     width: 50%;
     margin: auto;
     padding: 5px;
@@ -160,4 +159,9 @@ h6 {
     margin-left: auto;
     margin-right: 10px;
     color: gray;
+}
+
+.spaceEven {
+    display: flex;
+    justify-content: space-evenly;
 }
