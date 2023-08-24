@@ -276,20 +276,16 @@ class GRBLConection():
             if self.Async == False:
                 break
             
-            if line.startswith('error') == False:
-                self.SocketEmit('console', {'data': line, 'class': 'recive'})
-            
-            else:
-                self.SocketEmit('console', {'data': line, 'class': 'reciveError'})
-                print(f'GRBL reports an error: {line}')
-            
             if line.startswith('<') and line.endswith('>'):
                 self.StatusReportProcess(line)
+                self.SocketEmit('console', {'data': line, 'class': 'status'})
                 
             elif line.startswith('ok'):
                 self.okCount += 1 
+                self.SocketEmit('console', {'data': line, 'class': 'recive'})   
             
             elif line.startswith('$') and '=' in line:
+                self.SocketEmit('console', {'data': line, 'class': 'recive'})   
                 if 'N' not in line:
                     self.processGRBLSettings(line)
                 else:
@@ -297,7 +293,7 @@ class GRBLConection():
                     self.startuplines[data[0]] = data[1]
                 
             elif line.startswith('[') and line.endswith(']'):
-                
+                self.SocketEmit('console', {'data': line, 'class': 'recive'})   
                 if 'MSG:' in line:
                     print(f'GRBL sent a message: {line}')
                     
@@ -315,13 +311,16 @@ class GRBLConection():
                     
             elif line.startswith('ALARM'):
                 print(f'GRBL reports an alarm: {line}')
-                
+                self.SocketEmit('console', {'data': line, 'class': 'recive'})   
             elif line.startswith('>'):
                 data = line.replace(">", '').split(':')
                 if data[1] != 'ok':
                     print(f'Start line failed {data[0]}')
-                
+                self.SocketEmit('console', {'data': line, 'class': 'recive'})   
             elif line.startswith('Grbl'):
-                pass
+                self.SocketEmit('console', {'data': line, 'class': 'recive'})
+            elif line.startswith('error'):
+                self.SocketEmit('console', {'data': line, 'class': 'reciveError'})
+                print(f'GRBL reports an error: {line}')
             if self.connection.in_waiting < 15:
                 time.sleep(0.05)

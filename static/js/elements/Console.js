@@ -3,25 +3,33 @@ const ConsoleInput = document.getElementById('consoleinput')
 const grblconsole = document.getElementById('Consolelist');
 
 
+const ShowSystemConsole = document.getElementById('ShowSystemConsole')
+const ShowStatusConsole = document.getElementById('ShowStatusConsole')
+const ShowRecivedConsole = document.getElementById('ShowRecivedConsole');
 
-const maxConsoleItems = 500; // Set the maximum number of console items
+const ClearConsole = document.getElementById('ClearConsole');
 
-window.socket.on('console', function (data) {    
-    // Create a new console item
-    const consoleItem = document.createElement('div');
-    consoleItem.classList.add('consoleitem');
-    consoleItem.innerHTML = `<h5 class='${data.class}'>${htmlEscape(data.data)}</h5>`;
-    
-    // Insert the new console item at the beginning of the container
-    grblconsole.insertBefore(consoleItem, grblconsole.firstChild);
-    
-    // Remove excess console items if the limit is exceeded
-    const consoleItems = grblconsole.getElementsByClassName('consoleitem');
-    if (consoleItems.length > maxConsoleItems) {
-        while (consoleItems.length > maxConsoleItems) {
-            grblconsole.removeChild(consoleItems[maxConsoleItems]);
+const maxConsoleItems = document.getElementById('MaxConsole'); // Set the maximum number of console items
+
+window.socket.on('console', function (data) {
+    if ((data.class == 'systemsent' && ShowSystemConsole.checked) || (data.class == 'recive' && ShowRecivedConsole.checked) || (data.class == 'status' && ShowStatusConsole.checked)) {
+        // Create a new console item
+        let consoleItem = document.createElement('div');
+        consoleItem.classList.add('consoleitem');
+        consoleItem.innerHTML = `<h5 class='${data.class}'>${htmlEscape(data.data)}</h5>`;
+
+        // Insert the new console item at the beginning of the container
+        grblconsole.insertBefore(consoleItem, grblconsole.firstChild);
+
+        // Remove excess console items if the limit is exceeded
+        const consoleItems = grblconsole.getElementsByClassName('consoleitem');
+        if (consoleItems.length > maxConsoleItems.value) {
+            while (consoleItems.length > maxConsoleItems.value) {
+                grblconsole.removeChild(consoleItems[maxConsoleItems.value]);
+            }
         }
     }
+
 });
 
 SendConsole.addEventListener("click", SendConsoleInput);
@@ -30,6 +38,11 @@ function SendConsoleInput() {
     window.socket.emit('sendconsole', ConsoleInput.value);
     ConsoleInput.value = '';
 }
+
+ClearConsole.addEventListener("click", function () {
+    grblconsole.innerHTML = ''
+})
+
 
 function htmlEscape(str) {
     str = String(str);

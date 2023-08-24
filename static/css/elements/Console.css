@@ -5,6 +5,7 @@
     background-color: #121212;
     border-radius: 5px;
     border-style: groove;
+    border-color:gray;
  }
  .commandInput {
      width: 95%;
@@ -20,7 +21,7 @@
      display: grid;
      margin: 5px;
      grid-template-columns: 100%;
-     height: 30vh;
+     height: 25vh;
      align-content: baseline;
      overflow: auto;
  
@@ -43,6 +44,13 @@
  .systemsent {
     color: rgba(128, 128, 128, 0.486);
 }
-.recive {
+.recive, .status {
     color: gray;
+}
+#MaxConsole {
+    margin-left: 10px;
+}
+#ClearConsole {
+    margin: 5px;
+    margin-right: 0;
 }

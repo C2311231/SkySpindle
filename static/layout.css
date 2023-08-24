@@ -112,6 +112,16 @@ body {
 
 input[type=number] {
     -moz-appearance: textfield;
+    width: 50%;
+    padding: 5px;
+    text-align: right;
+    background-color: #272727;
+    border-radius: 5px;
+    border-style: groove;
+    border-width: 1px;
+    border-color: black;
+    color: gray;
+    outline: none;
 }
 
 input::-webkit-outer-spin-button,
@@ -131,22 +141,6 @@ button {
     color: gray;
 }
 
-.PosInput input,
-span input,
-.machineOption input, td input {
-    width: 50%;
-    margin: auto;
-    padding: 5px;
-    text-align: right;
-    background-color: #272727;
-    border-radius: 5px;
-    border-style: groove;
-    border-width: 1px;
-    border-color: black;
-    color: gray;
-    outline: none;
-}
-
 hr {
     width: 90%;
     max-height: 1px;
@@ -159,6 +153,11 @@ h6 {
     margin-left: auto;
     margin-right: 10px;
     color: gray;
+}
+
+.marginAuto {
+    margin: auto;
+    width: auto;
 }
 
 .spaceEven {
