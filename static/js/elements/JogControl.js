@@ -35,17 +35,40 @@ const MXpos = document.getElementById('MXpos');
 const MYpos = document.getElementById('MYpos');
 const MZpos = document.getElementById('MZpos');
 
-var Xpos = document.getElementById('Xpos');
-var Ypos = document.getElementById('Ypos');
-var Zpos = document.getElementById('Zpos');
+const Xpos = document.getElementById('Xpos');
+const Ypos = document.getElementById('Ypos');
+const Zpos = document.getElementById('Zpos');
 
+const ResetZero = document.getElementById('ResetZero');
+const ToggleMist = document.getElementById('ToggleMist');
+const ToggleFlood = document.getElementById('ToggleFlood');
 
 var timeoutId;
 
 
 // Slider Handlers
 
+MXpos.addEventListener("click", function () {
+    window.socket.emit('ZeroAxis', ['X']);
+});
+MYpos.addEventListener("click", function () {
+    window.socket.emit('ZeroAxis', ['Y']);
+});
+MZpos.addEventListener("click", function () {
+    window.socket.emit('ZeroAxis', ['Z']);
+});
 
+ResetZero.addEventListener("click", function () {
+    window.socket.emit('ZeroAxis', ['X', 'Y', 'Z']);
+});
+
+ToggleMist.addEventListener("click", function () {
+    window.socket.emit('ToggleMist');
+});
+
+ToggleFlood.addEventListener("click", function () {
+    window.socket.emit('ToggleFlood');
+});
 
 FeedLabel.value = Feed.value;
 SpindleLabel.value = SpindleOveride.value;
@@ -170,27 +193,27 @@ for (var i = 0; i < JogLeft.length; i++) {
 }
 for (var i = 0; i < JogRight.length; i++) {
     JogRight[i].addEventListener("click", function () {
-        window.socket.emit('Jog', { x: JogDis.value, y: 0, z: 0, f: window.feedrate});
+        window.socket.emit('Jog', { x: JogDis.value, y: 0, z: 0, f: (window.feedrate)});
     });
 }
 for (var i = 0; i < JogUp.length; i++) {
     JogUp[i].addEventListener("click", function () {
-        window.socket.emit('Jog', { x: 0, y: JogDis.value, z: 0, f: window.feedrate});
+        window.socket.emit('Jog', { x: 0, y: JogDis.value, z: 0, f: (window.feedrate)});
     });
 }
 for (var i = 0; i < JogDown.length; i++) {
     JogDown[i].addEventListener("click", function () {
-        window.socket.emit('Jog', { x: 0, y: -(JogDis.value), z: 0, f: window.feedrate});
+        window.socket.emit('Jog', { x: 0, y: -(JogDis.value), z: 0, f: (window.feedrate)});
     });
 }
 for (var i = 0; i < JogVUp.length; i++) {
     JogVUp[i].addEventListener("click", function () {
-        window.socket.emit('Jog', { x: 0, y: 0, z: JogDis.value, f: window.feedrate});
+        window.socket.emit('Jog', { x: 0, y: 0, z: JogDis.value, f: (window.feedrate)});
     });
 }
 for (var i = 0; i < JogVDown.length; i++) {
     JogVDown[i].addEventListener("click", function () {
-        window.socket.emit('Jog', { x: 0, y: 0, z: -(JogDis.value), f: window.feedrate});
+        window.socket.emit('Jog', { x: 0, y: 0, z: -(JogDis.value), f: (window.feedrate)});
     });
 }
 

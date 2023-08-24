@@ -38,7 +38,18 @@ def home():
 def fil(data):
     GRBL_COMMAND_BUFFER.append(['Jog', [data['x'], data['y'], data['z'], data['f']]])
     
+@socketio.on('ZeroAxis')
+def ZeroAxis(data):
+    GRBL_COMMAND_BUFFER.append(['ZeroAxis', [data]])
+
+@socketio.on('ToggleMist')
+def ToggleMist():
+    GRBL_COMMAND_BUFFER.append(['ToggleMist', []])
     
+@socketio.on('ToggleFlood')
+def ZeroAxis():
+    GRBL_COMMAND_BUFFER.append(['ToggleFlood', []])
+
 @socketio.on('sendconsole')
 def fili(data):
     GRBL_COMMAND_BUFFER.append(['SendCommand', [data]])

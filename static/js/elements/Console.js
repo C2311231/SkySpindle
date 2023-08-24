@@ -12,7 +12,7 @@ const ClearConsole = document.getElementById('ClearConsole');
 const maxConsoleItems = document.getElementById('MaxConsole'); // Set the maximum number of console items
 
 window.socket.on('console', function (data) {
-    if ((data.class == 'systemsent' && ShowSystemConsole.checked) || (data.class == 'recive' && ShowRecivedConsole.checked) || (data.class == 'status' && ShowStatusConsole.checked)) {
+    if ((data.class == 'systemsent' && ShowSystemConsole.checked) || (data.class == 'recive' && ShowRecivedConsole.checked) || (data.class == 'status' && ShowStatusConsole.checked)|| (data.class == 'reciveError')) {
         // Create a new console item
         let consoleItem = document.createElement('div');
         consoleItem.classList.add('consoleitem');

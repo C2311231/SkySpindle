@@ -1,11 +1,11 @@
 const SpindleSpeed = document.getElementById('Spindle');
 const Feedrate = document.getElementById('Feedrate');
 
-
-SpindleSpeed.onchange(function () {
-    window.spindlespeed = SpindleSpeed.Value;
+window.feedrate = Feedrate.value;
+SpindleSpeed.addEventListener("change", function () {
+    window.spindlespeed = SpindleSpeed.value;
 });
 
-Feedrate.onchange(function () {
-    window.feedrate = Feedrate.Value;
+Feedrate.addEventListener("change", function () {
+    window.feedrate = Feedrate.value;
 });

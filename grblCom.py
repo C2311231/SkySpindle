@@ -40,7 +40,7 @@ class GRBLConection():
     def SendCommand(self, command, Class='systemsent'):
         
         if isinstance(command, bytes):
-            self.SocketEmit('console', {'data': command.decode(), 'class': Class})
+            self.SocketEmit('console', {'data': command.decode(encoding='unicode_escape'), 'class': Class})
             self.connection.write(command)
         else:
             self.SocketEmit('console', {'data': command, 'class': Class})
@@ -65,12 +65,13 @@ class GRBLConection():
                 else:
                     self.Machinestatus = item
                     self.subStatus = None
-                    
+            elif 'A' in item:
+                self.accessoryState = list(item)                    #OPTIMIZE with .startswith()
             elif 'FS' in item:
                 FS = item.replace('FS:', '').split(',')
                 self.RealFeed = float(FS[0])
                 self.RealSpindle = float(FS[1])
-                
+            
             elif 'F' in item:
                 self.RealFeed = float(item.replace('F:', ''))
                 
@@ -99,8 +100,7 @@ class GRBLConection():
             elif 'Pn' in item:
                 self.triggeredPins = list(item)
                 
-            elif 'A' in item:
-                self.accessoryState = list(item)
+
                 
     def Jog(self, disX, disY, disZ, feedrate):
         self.SendCommand(f'$J=G91 G21 X{disX} Y{disY} Z{disZ} F{feedrate}\n') 
@@ -268,6 +268,15 @@ class GRBLConection():
                      self.SendCommand(f'$H{command[1][0]}')
                 elif command[0] == 'SpindleControl':
                      self.SendCommand(f'M03 S{command[1][0]}')
+                elif command[0] == 'ZeroAxis':
+                    axis = ''
+                    for item in command[1][0]:
+                        axis = axis + f'{item}0'
+                    self.SendCommand(f'G10 L20 P1 {axis}')
+                elif command[0] == 'ToggleMist':
+                    self.SendCommand(b'\xA1\n')
+                elif command[0] == 'ToggleFlood':
+                    self.SendCommand(b'\xA0\n')
                 buffer.remove(command)
         
     def GetData(self):
