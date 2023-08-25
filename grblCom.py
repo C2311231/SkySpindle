@@ -224,6 +224,8 @@ class GRBLConection():
         self.notSending = True
         self.lastPosTime = time.time()
         while self.Async:
+            if self.Async == False:
+                break
             if self.notSending:
                 if time.time() - 0.3 > self.lastPosTime:
                     self.SendCommand(b'?')

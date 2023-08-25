@@ -68,6 +68,7 @@ def toggleSpindle(data):
 def SlowUpdate():
     OPERATIONS = os.listdir('./OperationFiles')
     socketio.emit('settings', GRBL.settings)
+    global State
     socketio.emit('State', State)
     socketio.emit('operations', OPERATIONS)
 
@@ -116,8 +117,6 @@ def Connect(data):
 @socketio.on('Disconnect')
 def Disconnect():
     GRBL.stop_thread()
-    GRBLthread1.join()
-    GRBLthread2.join()
     GRBL.connection.close()
     scheduler.pause()
     global State
@@ -135,9 +134,13 @@ def SendPorts(data):
 
 @socketio.on('Start')
 def StartCycle(data):
+    print(data)
     GRBL_COMMAND_BUFFER.append(['StartOperation', data])
 
-
+@socketio.on('LoadFile')
+def LoadFile(data):
+    with open(f'./OperationFiles/{data}') as file:
+        socketio.emit('LoadedFile', file.readlines())
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
