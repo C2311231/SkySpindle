@@ -175,11 +175,6 @@ window.socket.on('Overides', function (data) {
     SpindleLabel.value = data[2];
 });
 
-window.socket.on('positionW', function (data) {
-    Xpos.value = data[0];
-    Ypos.value = data[1];
-    Zpos.value = data[2];
-});
 window.socket.on('positionM', function (data) {
     MXpos.innerHTML = `X |${data[0]}|`;
     MYpos.innerHTML = `Y |${data[1]}|`;
@@ -227,3 +222,38 @@ HomeZ.addEventListener('click', function () { window.socket.emit('home', 'Z') })
 
 SpindleOff.addEventListener('click', function () { window.socket.emit('spindle', '0') });
 SpindleOn.addEventListener('click', function () { window.socket.emit('spindle', window.spindlespeed) });
+window.updatePos = true;
+
+window.socket.on('positionW', function (data) {
+    if (updatePos) {
+        Xpos.value = data[0];
+        Ypos.value = data[1];
+        Zpos.value = data[2];
+    }
+});
+
+Xpos.oninput = function () {
+    window.updatePos = false
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(function () {
+    window.socket.emit('Move', `X${Xpos.value} F${window.feedrate}`);
+    window.updatePos = true;
+    }, 1000)
+    
+}
+Ypos.oninput= function () {
+    window.updatePos = false
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(function () {
+    window.socket.emit('Move', `Y${Ypos.value} F${window.feedrate}`);
+    window.updatePos = true;
+    }, 1000)
+}
+Zpos.oninput = function () {
+    window.updatePos = false
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(function () {
+    window.socket.emit('Move', `Z${Zpos.value} F${window.feedrate}`);
+    window.updatePos = true;
+    }, 1000)
+}

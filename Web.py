@@ -64,6 +64,10 @@ def homeAxis(data):
 def toggleSpindle(data):
     GRBL_COMMAND_BUFFER.append(['SpindleControl', [data]])
     
+@socketio.on('Move')
+def Move(data):
+    GRBL_COMMAND_BUFFER.append(['Move', [data]])
+    
 @scheduler.task('interval', id='SlowUpdate', seconds=5, max_instances=1)
 def SlowUpdate():
     OPERATIONS = os.listdir('./OperationFiles')
@@ -80,8 +84,14 @@ def UpdateSettings():
 
 @scheduler.task('interval', id='GetPos', seconds=0.3, max_instances=5)
 def SendPositionData():
-    socketio.emit('positionM', GRBL.Mpos)
-    socketio.emit('positionW', GRBL.Wpos)
+    mpos = []
+    wpos = []
+    for item in GRBL.Mpos:
+        mpos.append(round(item, 3))
+    for item in GRBL.Wpos:
+        wpos.append(round(item, 3))
+    socketio.emit('positionM', mpos)
+    socketio.emit('positionW', wpos)
     if GRBL.subStatus:
         socketio.emit('Machine Status', f'Status: {GRBL.Machinestatus}:{GRBL.subStatus}')
     else:
@@ -144,6 +154,7 @@ def LoadFile(data):
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
+    print(request.files)
     uploaded_file = request.files['file']
     if uploaded_file:
         filename = uploaded_file.filename
@@ -156,6 +167,11 @@ def upload_file():
 
 def SendData(Name, data):
     socketio.emit(Name, data)
+
+@socketio.on('ESTOP')
+def ESTOP():
+    print('ESTOP!!!!')
+    GRBL.SendCommand(b'\x18')
 
 if __name__ == "__main__":
     scheduler.start()

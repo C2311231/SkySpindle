@@ -228,7 +228,7 @@ class GRBLConection():
                 break
             if self.notSending:
                 if time.time() - 0.3 > self.lastPosTime:
-                    self.SendCommand(b'?')
+                    self.SendCommand(b'?', Class='status')
                     self.lastPosTime = time.time()
                 self.prossesSend(buffer)
             time.sleep(0.2)
@@ -250,7 +250,7 @@ class GRBLConection():
                     self.SendCommand(command[1][0], 'userSent')
                 elif command[0] == 'StatusReport':
                     self.requested -= 1
-                    self.SendCommand(b'?')
+                    self.SendCommand(b'?', Class='status')
                 elif command[0] == 'Jog':
                     self.Jog(command[1][0], command[1][1], command[1][2], command[1][3])
                 elif command[0] == 'adjustRapid':
@@ -279,6 +279,9 @@ class GRBLConection():
                     self.SendCommand(b'\xA1\n')
                 elif command[0] == 'ToggleFlood':
                     self.SendCommand(b'\xA0\n')
+                elif command[0] == 'Move':
+                    self.SendCommand(f'$J=G90 G21 {command[1][0]}\n')
+                    
                 buffer.remove(command)
         
     def GetData(self):

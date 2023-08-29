@@ -4,17 +4,50 @@
     overflow: auto;
     border-style: hidden;
     flex-direction: column;
-    
 }
 
 .listItem {
     padding: 10px;
-    margin-left: 40px;
 }
-.list h2 {
-    margin-left: 30px;
+.subtitlemargin {
+    margin-left: 15px;
 }
-.CycleStart {
+.Btn {
     float: right;
-    margin-right: 50px;
+    margin-right: 10px;
+}
+#operations {
+    margin: 0px 50px 0px 50px;
+}
+#operations hr{
+    width: 99%;
+}
+.status {
+    display: flex;
+}
+
+.progressBar {
+    margin-left: 5%;
+}
+.flex {
+    display: flex;
+    
+}
+.maxwidth {
+    width: 100%;
+    flex-shrink: 0;
+}
+.LiveOperationControls {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    align-items: end;
+    padding: 15px;
+}
+.OperationInfo {
+    width: 100%;
+}
+
+#uploadButton {
+    margin-left: auto;
 }
