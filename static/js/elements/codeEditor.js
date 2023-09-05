@@ -33,3 +33,4 @@ window.socket.on('LoadedFile', function (data) {
     });
     FileEditor.session.setValue(window.loadedfile);
 });
+

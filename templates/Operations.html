@@ -17,29 +17,28 @@
                     </svg>
                 </div>
                 <div class="OperationInfo">
-                    <p>
-                        ETA: 10:00 <br>
-                        Line Number: 100/10000 <br>
-                        Time: 1:00 <br>
-                    </p>
+                    <p id="OperationETA">ETA: 10:00</p>
+                    <p id="OperationLineNum">Line Number: 100/10000</p>
+                    <p id="OperationTime">Time: 0</p>
+  
                 </div>
                 <div class="LiveOperationControls">
-                    <button class="Btn" title="Cancel/Unload Operation">
+                    <button class="Btn" id="OperationCancel" title="Cancel/Unload Operation">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="red" class="bi bi-stop-fill" viewBox="0 0 16 16">
                             <path d="M5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11V5A1.5 1.5 0 0 1 5 3.5z"/>
                         </svg>
                     </button>
-                    <button class="Btn" title="Hold (Doesn't stop spindle)">
+                    <button class="Btn" id="OperationHold" title="Hold (Doesn't stop spindle)">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="darkorange" class="bi bi-pause-btn-fill" viewBox="0 0 16 16">
                             <path d="M0 12V4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm6.25-7C5.56 5 5 5.56 5 6.25v3.5a1.25 1.25 0 1 0 2.5 0v-3.5C7.5 5.56 6.94 5 6.25 5zm3.5 0c-.69 0-1.25.56-1.25 1.25v3.5a1.25 1.25 0 1 0 2.5 0v-3.5C11 5.56 10.44 5 9.75 5z"/>
                         </svg>
                     </button>
-                    <button class="Btn" title="Pause Operation">
+                    <button class="Btn" id="OperationPause" title="Pause Operation">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="orange" class="bi bi-pause" viewBox="0 0 16 16">
                             <path d="M6 3.5a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5zm4 0a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5z"/>
                         </svg>
                     </button>
-                    <button class="Btn" title="Start Operation">
+                    <button class="Btn" id="OperationStart" title="Start Operation">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="green" class="bi bi-caret-right-fill" viewBox="0 0 16 16">
                             <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
                         </svg>

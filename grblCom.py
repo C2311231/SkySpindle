@@ -36,6 +36,7 @@ class GRBLConection():
         self.status = 'Idle'
         self.subStatus = None
         self.Machinestatus = None
+        self.linenum = 0
         
     def SendCommand(self, command, Class='systemsent'):
         
@@ -174,7 +175,9 @@ class GRBLConection():
     def SendFile(self, filePath, mode, buffer):
         self.status = 'Operating'
         file = open(filePath, 'r')
-        i = 1
+        file = file.readlines()
+        self.linenum = 1
+        self.fileLenght = len(file)
         if mode == 'Fast':               # NONFUNCTIONAL
             linesCharactorCounts = []
             RX_BUFFER_SIZE = 100
@@ -183,7 +186,7 @@ class GRBLConection():
             for line in file:
                 self.Async = False
                 line = re.sub(r'\s|\(.*?\)', '', line).upper().strip()
-                line = line +f'N{i}'
+                line = line +f'N{self.linenum}'
                 linesCharactorCounts.append(len(line)+1)
                 print(f'charactorcount = {sum(linesCharactorCounts)}')
                 while sum(linesCharactorCounts) >= RX_BUFFER_SIZE - 1 or self.connection.in_waiting:
@@ -191,7 +194,7 @@ class GRBLConection():
                     print('recived ' + returnData)
                     returnData = returnData.strip()
                     if 'error' in returnData:
-                        print(f'GRBL Reports Error on line {i-linesInBuffer}:   {returnData}')
+                        print(f'GRBL Reports Error on line {self.linenum-linesInBuffer}:   {returnData}')
                         return
                     elif 'echo' not in line:
                         GCodeCount +=1
@@ -201,7 +204,7 @@ class GRBLConection():
                 
                 self.connection.write((line + '\n').encode())
                 linesInBuffer += 1
-                i += 1
+                self.linenum += 1
                 
                 
         if mode == 'Reliable':
@@ -211,13 +214,13 @@ class GRBLConection():
             for line in file:
                 self.notSending = False
                 l = line.strip() # Strip all EOL characters for consistency
-                buffer.append(["FileCommand", (l + f' N{i}\n').encode()]) # Send g-code block to grbl
+                buffer.append(["FileCommand", (l + f' N{self.linenum}\n').encode()]) # Send g-code block to grbl
                 self.requested += 1
                 while self.requested > self.okCount:
                     self.notSending = True
                     time.sleep(0.3)
-                i += 1
-                
+                self.linenum += 1
+                self.SocketEmit('LineNum', [self.linenum, self.fileLenght])
         self.status = 'Idle'
     def Async(self, buffer):
         self.Async=True

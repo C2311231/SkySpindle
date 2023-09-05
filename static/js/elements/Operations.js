@@ -1,11 +1,20 @@
 const operations = document.getElementById('operations');
 const StatusCircle = document.getElementById('StatusCircle');
 const StatusText = document.getElementById('StatusText');
+const OperationTime = document.getElementById('OperationTime');
+const OperationLineNum = document.getElementById('OperationLineNum');
+const OperationETA = document.getElementById('OperationETA');
+
+const OperationCancel = document.getElementById('OperationCancel');
+const OperationHold = document.getElementById('OperationHold');
+const OperationPause = document.getElementById('OperationPause');
+const OperationStart = document.getElementById('OperationStart');
+
 
 window.socket.on('operations', function (data) {
-    operations.innerHTML = ''
-    data.forEach(element => {
-        operations.innerHTML += `        
+  operations.innerHTML = ''
+  data.forEach(element => {
+    operations.innerHTML += `        
         <div class="listItem">
             ${element}
             <button class="Btn" title="Load File" onClick="loadFile('${element}')">
@@ -20,49 +29,31 @@ window.socket.on('operations', function (data) {
                 </svg>
             </button>
         </div >
-        <hr>`;  
-    });
+        <hr>`;
+  });
 
 });
 
-function loadFile(element){
-    console.log(`loading file ${element}`)
-    window.socket.emit('LoadFile', element);
-    window.loadedfilename = element
-}
-
-
-for (let i = 0; i <= 100; i++) {
-    setTimeout(function() {
-         if (i.toString().length == 3){
-            StatusText.setAttribute("x", '37px');
-         }
-         else if (i.toString().length == 2){
-            StatusText.setAttribute("x", '51px')
-         }
-         else{
-            StatusText.setAttribute("x", '65px')
-         }
-        const dashOffset = 565 - (i * (565 / 100));
-        StatusCircle.setAttribute('stroke-dashoffset', `${dashOffset}px`);
-        StatusText.innerHTML = `${i}%`;
-    }, i * 300); // Use i * 30 milliseconds delay for a smoother animation
+function loadFile(element) {
+  console.log(`loading file ${element}`)
+  window.socket.emit('LoadFile', element);
+  window.loadedfilename = element
 }
 
 document.getElementById('uploadButton').addEventListener('click', function () {
-    document.getElementById('fileInput').click();
-  });
-  
-  document.getElementById('fileInput').addEventListener('change', function (event) {
-    const file = event.target.files[0];
-    if (file) {
-      const formData = new FormData();
-      formData.append('file', file);
-  
-      fetch('/upload', {
-        method: 'POST',
-        body: formData,
-      })
+  document.getElementById('fileInput').click();
+});
+
+document.getElementById('fileInput').addEventListener('change', function (event) {
+  const file = event.target.files[0];
+  if (file) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    fetch('/upload', {
+      method: 'POST',
+      body: formData,
+    })
       .then(response => response.json())
       .then(data => {
         // Handle the JSON response data here
@@ -71,5 +62,49 @@ document.getElementById('uploadButton').addEventListener('click', function () {
       .catch(error => {
         console.error('Error:', error);
       });
-    }
-  });
+  }
+});
+
+var StartTime = Date.now()
+
+function updateTime() {
+  var now = Date.now();
+  var diff = now - StartTime;
+  var days = diff / 86400000 | 0;
+  diff -= days * 86400000;
+  var hours = diff / 3600000 | 0;
+  diff -= hours * 3600000;
+  var minutes = diff / 60000 | 0;
+  diff -= minutes * 60000;
+  var seconds = diff / 1000 | 0;
+  OperationTime.innerHTML = `Time: ${days}:${hours}:${minutes}:${seconds}`;
+};
+setInterval(updateTime, 1000);
+
+window.socket.on('ETA', function (data) {
+  OperationETA.innerHTML = `ETA: ${data}`
+});
+
+window.socket.on('LineNum', function (data) {
+  OperationLineNum.innerHTML = `Line Number: ${data[0]}/${data[1]}`
+  var completion = (data[0]/data[1])*100
+  if (data.toString().length == 3) {
+    StatusText.setAttribute("x", '37px');
+  }
+  else if (data.toString().length == 2) {
+    StatusText.setAttribute("x", '51px')
+  }
+  else {
+    StatusText.setAttribute("x", '65px')
+  }
+  var dashOffset = 565 - (data * (565 / 100));
+  StatusCircle.setAttribute('stroke-dashoffset', `${dashOffset}px`);
+  StatusText.innerHTML = `${data}%`;
+  FileEditor.getSession().clearAnnotations();
+  FileEditor.getSession().setAnnotations([{
+    row: data,
+    column: 0,
+    text: "Last Sent line",
+    type: "info" // also warning and information
+    }]);
+});
