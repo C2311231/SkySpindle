@@ -41,9 +41,9 @@ def ParseFile(file):
                 elif Item == 'G0':
                     XTarget, YTarget, ZTarget = (XTarget if XTarget else lastpos[0]), (YTarget if YTarget else lastpos[1]), (ZTarget if ZTarget else lastpos[2])
                     operationTime = math.sqrt(
-                        ((XTarget - lastpos[0]) * RapidFeedX) ** 2 +
-                        ((YTarget - lastpos[1]) * RapidFeedY) ** 2 +
-                        ((ZTarget - lastpos[2]) * RapidFeedZ) ** 2)
+                        ((XTarget - lastpos[0]) / RapidFeedX) ** 2 +
+                        ((YTarget - lastpos[1]) / RapidFeedY) ** 2 +
+                        ((ZTarget - lastpos[2]) / RapidFeedZ) ** 2)
                     lastpos = [(XTarget if XTarget else lastpos[0]), (YTarget if YTarget else lastpos[1]), (ZTarget if ZTarget else lastpos[2])]
                     time += operationTime
                     XTarget, YTarget, ZTarget = None, None, None
@@ -69,15 +69,16 @@ def ParseFile(file):
                         A = math.sqrt((lastpos[0] - ITarget)**2 + (lastpos[1] - JTarget)**2 + (lastpos[2] - KTarget)**2)
                         B = math.sqrt((ITarget - XTarget)**2 + (JTarget - YTarget)**2 + (KTarget - ZTarget)**2)
                         C = math.sqrt((XTarget - lastpos[0])**2 + (YTarget - lastpos[1])**2 + (ZTarget - lastpos[2])**2)
-                        radius = (A*B*C)/ math.sqrt(((2*A**2)*(B**2)+(2*B**2)*(C**2)+(2*C**2)*(A**2))-(A**4)-(B**4)-(C**4)) 
+                        radius = (A * B * C) / math.sqrt((2 * A**2 * B**2 + 2 * B**2 * C**2 + 2 * C**2 * A**2) - (A**4 + B**4 + C**4)) 
                     angle = 2.0 * math.asin(Distance / ((2.0 * radius)+0.001))
 
-                    # Convert the feedrate to angular speed (ω) in radians per second
+                    # Convert the feedrate to angular speed in radians per second
                     angular_speed = (Feedrate / 60.0) / radius
 
-                    # Calculate the time (T) in seconds
+                    # Calculate the time in seconds
                     time += angle / angular_speed
                     ITarget, JTarget, KTarget = None, None, None
+                    lastpos = [XTarget, YTarget, ZTarget]
                     XTarget, YTarget, ZTarget = None, None, None
                     RTarget = None
                 elif Item == 'G3':
@@ -93,15 +94,16 @@ def ParseFile(file):
                         A = math.sqrt((lastpos[0] - ITarget)**2 + (lastpos[1] - JTarget)**2 + (lastpos[2] - KTarget)**2)
                         B = math.sqrt((ITarget - XTarget)**2 + (JTarget - YTarget)**2 + (KTarget - ZTarget)**2)
                         C = math.sqrt((XTarget - lastpos[0])**2 + (YTarget - lastpos[1])**2 + (ZTarget - lastpos[2])**2)
-                        radius = (A*B*C)/ math.sqrt(((2*A**2)*(B**2)+(2*B**2)*(C**2)+(2*C**2)*(A**2))-(A**4)-(B**4)-(C**4)) 
+                        radius = (A * B * C) / math.sqrt((2 * A**2 * B**2 + 2 * B**2 * C**2 + 2 * C**2 * A**2) - (A**4 + B**4 + C**4))
                     angle = 2.0 * math.asin(Distance / ((2.0 * radius)+0.001))
 
-                    # Convert the feedrate to angular speed (ω) in radians per second
+                    # Convert the feedrate to angular speed in radians per second
                     angular_speed = (Feedrate / 60.0) / radius
 
-                    # Calculate the time (T) in seconds
+                    # Calculate the time in seconds
                     time += angle / angular_speed
                     ITarget, JTarget, KTarget = None, None, None
+                    lastpos = [XTarget, YTarget, ZTarget]
                     XTarget, YTarget, ZTarget = None, None, None
                     RTarget = None
                 elif Item == 'G4':
@@ -121,10 +123,10 @@ def seconds_to_mixed_units(seconds):
     days, hours = divmod(hours, 24)
 
     return f"{round(days)} days, {round(hours)} hours, {round(minutes)} minutes, {round(seconds)} seconds"
-with open('./OperationFiles/file.nc') as file:
+with open('./OperationFiles/1005.nc') as file:
     print(seconds_to_mixed_units(ParseFile(file)))
     
     
     
-    
+#3:19
     
