@@ -123,8 +123,7 @@ def seconds_to_mixed_units(seconds):
     days, hours = divmod(hours, 24)
 
     return f"{round(days)} days, {round(hours)} hours, {round(minutes)} minutes, {round(seconds)} seconds"
-with open('./OperationFiles/1005.nc') as file:
-    print(seconds_to_mixed_units(ParseFile(file)))
+
     
     
     

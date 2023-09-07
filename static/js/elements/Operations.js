@@ -4,6 +4,8 @@ const StatusText = document.getElementById('StatusText');
 const OperationTime = document.getElementById('OperationTime');
 const OperationLineNum = document.getElementById('OperationLineNum');
 const OperationETA = document.getElementById('OperationETA');
+const LoadedFileName = document.getElementById('LoadedFileName');
+
 
 const OperationCancel = document.getElementById('OperationCancel');
 const OperationHold = document.getElementById('OperationHold');
@@ -87,24 +89,50 @@ window.socket.on('ETA', function (data) {
 
 window.socket.on('LineNum', function (data) {
   OperationLineNum.innerHTML = `Line Number: ${data[0]}/${data[1]}`
-  var completion = (data[0]/data[1])*100
-  if (data.toString().length == 3) {
+  var completionfull = (data[0]/data[1])*100
+  if(completionfull>=10){
+    var completion = completionfull.toFixed(0)
+  }
+  else{
+    var completion = completionfull.toFixed(1)
+  }
+  if (completion.toString().length == 3) {
     StatusText.setAttribute("x", '37px');
   }
-  else if (data.toString().length == 2) {
+  else if (completion.toString().length == 2) {
     StatusText.setAttribute("x", '51px')
   }
   else {
     StatusText.setAttribute("x", '65px')
   }
-  var dashOffset = 565 - (data * (565 / 100));
+  var dashOffset = 565 - (completionfull * (565 / 100));
   StatusCircle.setAttribute('stroke-dashoffset', `${dashOffset}px`);
-  StatusText.innerHTML = `${data}%`;
+  StatusText.innerHTML = `${completion}%`;
+  document.title = `SkySpindle - ${completion}%`
+  if(completionfull>=100){
+    document.title = `SkySpindle - Done`
+  }
   FileEditor.getSession().clearAnnotations();
   FileEditor.getSession().setAnnotations([{
-    row: data,
+    row: data[0],
     column: 0,
     text: "Last Sent line",
     type: "info" // also warning and information
     }]);
 });
+window.socket.on('LoadedFileName', function (data) {
+  LoadedFileName.innerHTML = data
+});
+
+OperationCancel.onclick = function(){
+  window.socket.emit('UnloadStopOperation')
+}
+OperationHold.onclick = function(){
+  window.socket.emit('HoldOperation')
+}
+OperationPause.onclick = function(){
+  window.socket.emit('PauseOperation')
+}
+OperationStart.onclick = function(){
+  window.socket.emit('Start', LoadedFileName.innerHTML)
+}

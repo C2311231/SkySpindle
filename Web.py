@@ -140,7 +140,18 @@ def ChangeSetting(data):
 def SendPorts(data):
     socketio.emit('USBPorts', grblCom.getUSBPorts())
     socketio.emit('State', State)
-    socketio.emit('operation', {'filename': OPERATIONS})
+    socketio.emit('operations', OPERATIONS)
+    try:
+        if GRBL.loadedFile != None:
+            socketio.emit('ETA', GRBL.OperationETA)
+            LoadFile(GRBL.loadedFile)
+            socketio.emit('LineNum', [0, GRBL.fileLenght])
+            socketio.emit('LoadedFileName', GRBL.loadedFile)
+        if GRBL.status == 'Operating':
+            socketio.emit('OperatingStartTime', GRBL.operationStartTime)
+            socketio.emit('LineNum', [GRBL.linenum, GRBL.fileLenght])
+    except:
+        pass
 
 @socketio.on('Start')
 def StartCycle(data):
@@ -149,6 +160,7 @@ def StartCycle(data):
 
 @socketio.on('LoadFile')
 def LoadFile(data):
+    GRBL.LoadFile(data)
     with open(f'./OperationFiles/{data}') as file:
         socketio.emit('LoadedFile', file.readlines())
 

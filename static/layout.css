@@ -164,3 +164,11 @@ h6 {
     display: flex;
     justify-content: space-evenly;
 }
+.overlay {
+    z-index: 6;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+}

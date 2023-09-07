@@ -4,7 +4,7 @@ import time
 import datetime
 import threading
 import re
-
+import gcodeParser
 
 def getUSBPorts():
     comPorts = serial.tools.list_ports.comports()
@@ -177,7 +177,7 @@ class GRBLConection():
         file = open(filePath, 'r')
         file = file.readlines()
         self.linenum = 1
-        self.fileLenght = len(file)
+        self.operationStartTime = time.time()
         if mode == 'Fast':               # NONFUNCTIONAL
             linesCharactorCounts = []
             RX_BUFFER_SIZE = 100
@@ -207,7 +207,7 @@ class GRBLConection():
                 self.linenum += 1
                 
                 
-        if mode == 'Reliable':
+        elif mode == 'Reliable':
             self.notSending = False
             self.requested = 0
             self.okCount = 0
@@ -341,3 +341,11 @@ class GRBLConection():
                 print(f'GRBL reports an error: {line}')
             if self.connection.in_waiting < 15:
                 time.sleep(0.05)
+    def LoadFile(self, file):
+        self.loadedFile = file
+        with open(f'./OperationFiles/{file}') as file:
+            file = file.readlines()
+            self.fileLenght = len(file)
+            self.OperationETA = gcodeParser.seconds_to_mixed_units(gcodeParser.ParseFile(file))
+        self.SocketEmit('ETA', self.OperationETA)
+        self.SocketEmit('LoadedFileName', self.loadedFile)
