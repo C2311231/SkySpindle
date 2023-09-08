@@ -156,7 +156,9 @@ def SendPorts(data):
 @socketio.on('Start')
 def StartCycle(data):
     print(data)
-    GRBL_COMMAND_BUFFER.append(['StartOperation', data])
+    GRBL_COMMAND_BUFFER.append(['SendCommand', ['~']])
+    if GRBL.status != 'Operating':
+        GRBL_COMMAND_BUFFER.append(['StartOperation', data])
 
 @socketio.on('LoadFile')
 def LoadFile(data):
@@ -185,6 +187,21 @@ def ESTOP():
     print('ESTOP!!!!')
     GRBL.SendCommand(b'\x18')
 
+@socketio.on('UNLOCKALARM')
+def Unlock():
+    GRBL.SendCommand('$X')
+@socketio.on('UnloadStopOperation')
+def UnloadStopOperation():
+    GRBL.KILLOPERATION = True
+    GRBL.LoadFile(None)
+    socketio.emit('LoadedFile', '')
+@socketio.on('HoldOperation')
+def HoldOperation():
+    GRBL.SendCommand('!')
+@socketio.on('PauseOperation')
+def PauseOperation():
+    GRBL.SendCommand('!')
+    GRBL.SendCommand(b'\x9E')
 if __name__ == "__main__":
     scheduler.start()
     scheduler.pause()

@@ -178,6 +178,7 @@ class GRBLConection():
         file = file.readlines()
         self.linenum = 1
         self.operationStartTime = time.time()
+        self.KILLOPERATION = False
         if mode == 'Fast':               # NONFUNCTIONAL
             linesCharactorCounts = []
             RX_BUFFER_SIZE = 100
@@ -217,6 +218,8 @@ class GRBLConection():
                 buffer.append(["FileCommand", (l + f' N{self.linenum}\n').encode()]) # Send g-code block to grbl
                 self.requested += 1
                 while self.requested > self.okCount:
+                    if self.KILLOPERATION:
+                        return
                     self.notSending = True
                     time.sleep(0.3)
                 self.linenum += 1
@@ -328,7 +331,8 @@ class GRBLConection():
                     
             elif line.startswith('ALARM'):
                 print(f'GRBL reports an alarm: {line}')
-                self.SocketEmit('console', {'data': line, 'class': 'recive'})   
+                self.SocketEmit('console', {'data': line, 'class': 'recive'})
+                self.KILLOPERATION = True   
             elif line.startswith('>'):
                 data = line.replace(">", '').split(':')
                 if data[1] != 'ok':
@@ -339,13 +343,22 @@ class GRBLConection():
             elif line.startswith('error'):
                 self.SocketEmit('console', {'data': line, 'class': 'reciveError'})
                 print(f'GRBL reports an error: {line}')
+                self.KILLOPERATION = True   
             if self.connection.in_waiting < 15:
                 time.sleep(0.05)
     def LoadFile(self, file):
         self.loadedFile = file
-        with open(f'./OperationFiles/{file}') as file:
-            file = file.readlines()
-            self.fileLenght = len(file)
-            self.OperationETA = gcodeParser.seconds_to_mixed_units(gcodeParser.ParseFile(file))
-        self.SocketEmit('ETA', self.OperationETA)
-        self.SocketEmit('LoadedFileName', self.loadedFile)
+        if self.loadedFile != None:
+            with open(f'./OperationFiles/{file}') as file:
+                file = file.readlines()
+                self.fileLenght = len(file)
+                self.OperationETA = gcodeParser.seconds_to_mixed_units(gcodeParser.ParseFile(file))
+            self.SocketEmit('ETA', self.OperationETA)
+            self.SocketEmit('LoadedFileName', self.loadedFile)
+            self.SocketEmit('LineNum', [0, self.fileLenght])
+        else:
+            self.fileLenght = 0
+            self.OperationETA = gcodeParser.seconds_to_mixed_units(0)
+            self.SocketEmit('ETA', self.OperationETA)
+            self.SocketEmit('LoadedFileName', self.loadedFile)
+            self.SocketEmit('LineNum', [0, self.fileLenght])

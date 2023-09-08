@@ -1,4 +1,4 @@
-<div class="overlay" id="overlay">
+<div class="overlay" id="overlay2">
     <div class="element floatingMenu" id="ALARMMenu">
         <div class="elementTitle">
             <div class="titleWithIcon">
@@ -12,8 +12,9 @@
         <div class="elementContent">
             <h1>Grbl reports an alarm state and is now locked!</h1>
                 <br>After you are sure that it's safe press the button below.
-            <button>Unlock</button>
+            <button id="ALARMUnlock">Unlock</button>
         </div>
     </div>
 </div>
 <link rel="stylesheet" href="{{url_for('static', filename='css/elements/ALARMState.css')}}">
+<script src="{{url_for('static', filename='js/elements/ALARMState.js')}}"></script>

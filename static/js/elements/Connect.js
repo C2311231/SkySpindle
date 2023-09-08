@@ -48,4 +48,5 @@ window.socket.on('State', function (data) {
 
 window.socket.on('Machine Status', function (data) {
     GrblStatus.innerText = data;
+    UpdateAlarm(data);
 });
