@@ -6,6 +6,7 @@ import threading
 import os
 import yaml
 import csv
+import time
 
 SettingsData = []
 
@@ -195,6 +196,9 @@ def UnloadStopOperation():
     GRBL.KILLOPERATION = True
     GRBL.LoadFile(None)
     socketio.emit('LoadedFile', '')
+    GRBL.SendCommand('!')
+    time.sleep(0.5)
+    GRBL.SendCommand(b'\x18')
 @socketio.on('HoldOperation')
 def HoldOperation():
     GRBL.SendCommand('!')
