@@ -93,6 +93,8 @@ def SendPositionData():
         wpos.append(round(item, 3))
     socketio.emit('positionM', mpos)
     socketio.emit('positionW', wpos)
+    if GRBL.status == 'Operating':
+        socketio.emit('operationTime', time.time() - GRBL.operationStartTime)
     if GRBL.subStatus:
         socketio.emit('Machine Status', f'Status: {GRBL.Machinestatus}:{GRBL.subStatus}')
     else:
@@ -148,11 +150,18 @@ def SendPorts(data):
             LoadFile(GRBL.loadedFile)
             socketio.emit('LineNum', [0, GRBL.fileLenght])
             socketio.emit('LoadedFileName', GRBL.loadedFile)
+
         if GRBL.status == 'Operating':
             socketio.emit('OperatingStartTime', GRBL.operationStartTime)
             socketio.emit('LineNum', [GRBL.linenum, GRBL.fileLenght])
+            socketio.emit('operationTime', time.time() - GRBL.operationStartTime)
     except:
-        pass
+        socketio.emit('ETA', 0)
+        socketio.emit('LoadedFileName', None)
+        socketio.emit('LineNum', [0, 0])
+        socketio.emit('LoadedFile', [''])
+        socketio.emit('operationTime', 0)
+        
 
 @socketio.on('Start')
 def StartCycle(data):
@@ -169,7 +178,6 @@ def LoadFile(data):
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
-    print(request.files)
     uploaded_file = request.files['file']
     if uploaded_file:
         filename = uploaded_file.filename
@@ -195,10 +203,12 @@ def Unlock():
 def UnloadStopOperation():
     GRBL.KILLOPERATION = True
     GRBL.LoadFile(None)
-    socketio.emit('LoadedFile', '')
+    socketio.emit('LoadedFile', [''])
     GRBL.SendCommand('!')
     time.sleep(0.5)
     GRBL.SendCommand(b'\x18')
+    GRBL.status = 'Idle'
+    socketio.emit('operationTime', 0)
 @socketio.on('HoldOperation')
 def HoldOperation():
     GRBL.SendCommand('!')

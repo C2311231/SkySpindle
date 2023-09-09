@@ -122,7 +122,7 @@ def seconds_to_mixed_units(seconds):
     hours, minutes = divmod(minutes, 60)
     days, hours = divmod(hours, 24)
 
-    return f"{round(days)} days, {round(hours)} hours, {round(minutes)} minutes, {round(seconds)} seconds"
+    return f"{round(days)}:{round(hours)}:{round(minutes)}:{round(seconds)}"
 
     
     

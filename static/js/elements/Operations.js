@@ -6,12 +6,14 @@ const OperationLineNum = document.getElementById('OperationLineNum');
 const OperationETA = document.getElementById('OperationETA');
 const LoadedFileName = document.getElementById('LoadedFileName');
 
-
+window.loadedfile = ''
 const OperationCancel = document.getElementById('OperationCancel');
 const OperationHold = document.getElementById('OperationHold');
 const OperationPause = document.getElementById('OperationPause');
 const OperationStart = document.getElementById('OperationStart');
 
+const JobStatus = document.getElementById('JobStatus');
+const OperationList = document.getElementById('OperationList');
 
 window.socket.on('operations', function (data) {
   operations.innerHTML = ''
@@ -69,9 +71,8 @@ document.getElementById('fileInput').addEventListener('change', function (event)
 
 var StartTime = Date.now()
 
-function updateTime() {
-  var now = Date.now();
-  var diff = now - StartTime;
+window.socket.on('operationTime', function (data) {
+  var diff = data*1000;
   var days = diff / 86400000 | 0;
   diff -= days * 86400000;
   var hours = diff / 3600000 | 0;
@@ -80,8 +81,7 @@ function updateTime() {
   diff -= minutes * 60000;
   var seconds = diff / 1000 | 0;
   OperationTime.innerHTML = `Time: ${days}:${hours}:${minutes}:${seconds}`;
-};
-setInterval(updateTime, 1000);
+});
 
 window.socket.on('ETA', function (data) {
   OperationETA.innerHTML = `ETA: ${data}`
@@ -112,13 +112,6 @@ window.socket.on('LineNum', function (data) {
   if(completionfull>=100){
     document.title = `SkySpindle - Done`
   }
-  FileEditor.getSession().clearAnnotations();
-  FileEditor.getSession().setAnnotations([{
-    row: data[0],
-    column: 0,
-    text: "Last Sent line",
-    type: "info" // also warning and information
-    }]);
 });
 window.socket.on('LoadedFileName', function (data) {
   LoadedFileName.innerHTML = data
@@ -136,3 +129,15 @@ OperationPause.onclick = function(){
 OperationStart.onclick = function(){
   window.socket.emit('Start', LoadedFileName.innerHTML)
 }
+function CheckForLoad(){
+  console.log(window.loadedfile)
+  if (window.loadedfile != ''){
+    OperationList.style.display = 'none'
+    JobStatus.style.display = 'block'
+  }
+  else{
+    OperationList.style.display = 'block'
+    JobStatus.style.display = 'none'
+  }
+}
+setInterval(CheckForLoad, 500)

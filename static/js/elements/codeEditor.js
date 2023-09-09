@@ -34,3 +34,12 @@ window.socket.on('LoadedFile', function (data) {
     FileEditor.session.setValue(window.loadedfile);
 });
 
+window.socket.on('LineNum', function (data) {
+    FileEditor.getSession().clearAnnotations();
+    FileEditor.getSession().setAnnotations([{
+    row: data[0] -1,
+    column: 0,
+    text: "Last Sent line",
+    type: "info" // also warning and information
+    }]);
+});
