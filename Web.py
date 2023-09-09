@@ -176,6 +176,12 @@ def LoadFile(data):
     with open(f'./OperationFiles/{data}') as file:
         socketio.emit('LoadedFile', file.readlines())
 
+@socketio.on('DeleteFile')
+def LoadFile(data):
+    os.remove(f'./OperationFiles/{data}')
+    OPERATIONS = os.listdir('./OperationFiles')
+    socketio.emit('operations', OPERATIONS)
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
     uploaded_file = request.files['file']
