@@ -3,14 +3,15 @@ const ConnectionIndicater = document.getElementById('ConnectionIndicater')
 // Receive data handlers
 window.socket.on('connect', function () {
     console.log('I\'m connected!');
-    ConnectionIndicater.getElementsByTagName('title')[0].innerHTML = 'Connected to Server'
     ConnectionIndicater.style.color = 'green'
+    ConnectionIndicater.getElementsByTagName('title')[0].innerHTML = 'Connected to Server'
 });
 
 window.socket.on('disconnect', function () {
     console.log('I\'m not connected!');
-    ConnectionIndicater.getElementsByTagName('title')[0].innerHTML = 'Disconnected from Server'
     ConnectionIndicater.style.color = 'red'
+    ConnectionIndicater.getElementsByTagName('title')[0].innerHTML = 'Disconnected from Server'
+    
 });
 
 

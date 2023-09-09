@@ -140,7 +140,7 @@ def ChangeSetting(data):
     GRBL_COMMAND_BUFFER.append(['ChangeSetting', [data[0], data[1]]])
     
 @socketio.on('connect')
-def SendPorts(data):
+def SendPorts():
     socketio.emit('USBPorts', grblCom.getUSBPorts())
     socketio.emit('State', State)
     socketio.emit('operations', OPERATIONS)
@@ -177,7 +177,7 @@ def LoadFile(data):
         socketio.emit('LoadedFile', file.readlines())
 
 @socketio.on('DeleteFile')
-def LoadFile(data):
+def DeleteFile(data):
     os.remove(f'./OperationFiles/{data}')
     OPERATIONS = os.listdir('./OperationFiles')
     socketio.emit('operations', OPERATIONS)
@@ -226,4 +226,4 @@ if __name__ == "__main__":
     scheduler.start()
     scheduler.pause()
     OPERATIONS = os.listdir('./OperationFiles')
-    socketio.run(app, debug=True, use_reloader=False)
+    socketio.run(app, debug=True, use_reloader=False, host='0.0.0.0')
