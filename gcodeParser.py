@@ -69,7 +69,7 @@ def ParseFile(file):
                         A = math.sqrt((lastpos[0] - ITarget)**2 + (lastpos[1] - JTarget)**2 + (lastpos[2] - KTarget)**2)
                         B = math.sqrt((ITarget - XTarget)**2 + (JTarget - YTarget)**2 + (KTarget - ZTarget)**2)
                         C = math.sqrt((XTarget - lastpos[0])**2 + (YTarget - lastpos[1])**2 + (ZTarget - lastpos[2])**2)
-                        radius = (A * B * C) / math.sqrt((2 * A**2 * B**2 + 2 * B**2 * C**2 + 2 * C**2 * A**2) - (A**4 + B**4 + C**4)) 
+                        radius = (A * B * C) / math.sqrt((2 * A**2 * B**2 + 2 * B**2 * C**2 + 2 * C**2 * A**2) - (A**4 + B**4 + C**4)) #Formula from Greek000 found here https://www.physicsforums.com/threads/equation-of-a-circle-through-3-points-in-3d-space.173847/
                     angle = 2.0 * math.asin(Distance / ((2.0 * radius)+0.001))
 
                     # Convert the feedrate to angular speed in radians per second
@@ -94,7 +94,7 @@ def ParseFile(file):
                         A = math.sqrt((lastpos[0] - ITarget)**2 + (lastpos[1] - JTarget)**2 + (lastpos[2] - KTarget)**2)
                         B = math.sqrt((ITarget - XTarget)**2 + (JTarget - YTarget)**2 + (KTarget - ZTarget)**2)
                         C = math.sqrt((XTarget - lastpos[0])**2 + (YTarget - lastpos[1])**2 + (ZTarget - lastpos[2])**2)
-                        radius = (A * B * C) / math.sqrt((2 * A**2 * B**2 + 2 * B**2 * C**2 + 2 * C**2 * A**2) - (A**4 + B**4 + C**4))
+                        radius = (A * B * C) / math.sqrt((2 * A**2 * B**2 + 2 * B**2 * C**2 + 2 * C**2 * A**2) - (A**4 + B**4 + C**4)) #Formula from Greek000 found here https://www.physicsforums.com/threads/equation-of-a-circle-through-3-points-in-3d-space.173847/
                     angle = 2.0 * math.asin(Distance / ((2.0 * radius)+0.001))
 
                     # Convert the feedrate to angular speed in radians per second

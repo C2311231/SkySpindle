@@ -19,56 +19,56 @@
         <div class="spaceEven">
             <div class="PosInput X">
                 <label>X</label>
-                <input step="0.01" type="number" value="0.00" id="Xpos">
+                <input step="0.01" type="number" title="Enter X Destination" value="0.00" id="Xpos">
             </div>
             <div class="PosInput Y">
                 <label>Y</label>
-                <input step="0.01" type="number" value="0.00" id="Ypos">
+                <input step="0.01" type="number" title="Enter X Destination" value="0.00" id="Ypos">
             </div>
             <div class="PosInput Z">
                 <label>Z</label>
-                <input step="0.01" type="number" value="0.00" id="Zpos">
+                <input step="0.01" type="number" title="Enter X Destination" value="0.00" id="Zpos">
             </div>
         </div>
         <hr>
         <div class="controlSection">
             <div class="JogControl">
-                <button class="JogBtn JogBtnL">
+                <button class="JogBtn JogBtnL" title="Jog -X">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-arrow-left"
                         viewBox="0 0 16 16">
                         <path fill-rule="evenodd"
                             d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z" />
                     </svg>
                 </button>
-                <button class="JogBtn JogBtnR">
+                <button class="JogBtn JogBtnR" title="Jog +X">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white"
                         class="bi bi-arrow-right" viewBox="0 0 16 16">
                         <path fill-rule="evenodd"
                             d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z" />
                     </svg>
                 </button>
-                <button class="JogBtn JogBtnU">
+                <button class="JogBtn JogBtnU" title="Jog +Y">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-arrow-up"
                         viewBox="0 0 16 16">
                         <path fill-rule="evenodd"
                             d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" />
                     </svg>
                 </button>
-                <button class="JogBtn JogBtnD">
+                <button class="JogBtn JogBtnD" title="Jog -Y">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-arrow-down"
                         viewBox="0 0 16 16">
                         <path fill-rule="evenodd"
                             d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z" />
                     </svg>
                 </button>
-                <button class="JogBtn JogBtnUp">
+                <button class="JogBtn JogBtnUp" title="Jog +Z">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-arrow-up"
                         viewBox="0 0 16 16">
                         <path fill-rule="evenodd"
                             d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" />
                     </svg>
                 </button>
-                <button class="JogBtn JogBtnDown">
+                <button class="JogBtn JogBtnDown" title="Jog -Z">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-arrow-down"
                         viewBox="0 0 16 16">
                         <path fill-rule="evenodd"
@@ -78,51 +78,51 @@
             </div>
             <div class="homing">
                 <div class="homingmulti">
-                    <button class="homeBtn hAll" id="HomeAll"><b>Home All</b></button>
-                    <button class="homeBtn hXY" id="HomeXY"><b>Home XY</b></button>
+                    <button class="homeBtn hAll" id="HomeAll" title="Home XYZ"><b>Home All</b></button>
+                    <button class="homeBtn hXY" id="HomeXY" title="Home XY"><b>Home XY</b></button>
                 </div>
 
                 <div class="homingsingle">
-                    <button class="homeBtn homeXBtn" id="HomeX"><b>X</b></button>
-                    <button class="homeBtn homeYBtn" id="HomeY"><b>Y</b></button>
-                    <button class="homeBtn homeZBtn" id="HomeZ"><b>Z</b></button>
+                    <button class="homeBtn homeXBtn" id="HomeX" title="Home X"><b>X</b></button>
+                    <button class="homeBtn homeYBtn" id="HomeY" title="Home Y"><b>Y</b></button>
+                    <button class="homeBtn homeZBtn" id="HomeZ" title="Home Z"><b>Z</b></button>
                 </div>
             </div>
             <div class="spindleToggle">
-                <button class="homeBtn" id="SpindleOn"><b>Spindle On</b></button>
-                <button class="homeBtn" id="SpindleOff"><b>Spindle Off</b></button>
+                <button class="homeBtn" id="SpindleOn" title="Sets Spindle to Spindle (rpm)"><b>Spindle On</b></button>
+                <button class="homeBtn" id="SpindleOff" title="Sets Spindle to 0"><b>Spindle Off</b></button>
             </div>
         </div>
         <div class="spaceEven">
-            <button class="defaultbtn" id="ResetZero"><b>Reset Zero</b></button>
-            <button class="defaultbtn" id="ToggleMist"><b>Toggle Mist</b></button>
-            <button class="defaultbtn" id="ToggleFlood"><b>Toggle Flood</b></button>
+            <button class="defaultbtn" id="ResetZero" title="Zeros all axis"><b>Reset Zero</b></button>
+            <button class="defaultbtn" id="ToggleMist" title="Enables/Disables Mist"><b>Toggle Mist</b></button>
+            <button class="defaultbtn" id="ToggleFlood" title="Enables/Disables Flood"><b>Toggle Flood</b></button>
         </div>
         <hr>
         <div class="JogSlider">
-            <span>Distance (mm): <input step="0.01" type="number" value="0.00" class="JogSliderLabel" id="JogDisLabel"></span>
+            <span>Distance (mm): <input step="0.01" title="Adjusts Jog Distance" type="number" value="0.00" class="JogSliderLabel" id="JogDisLabel"></span>
             <div class="slidecontainer">
-                <input type="range" min="1" max="50" value="19" step="1" class="slider" id="Jogdistance">
+                <input title="Adjusts Jog Distance" type="range" min="1" max="50" value="19" step="1" class="slider" id="Jogdistance">
             </div>
         </div>
 
         <div class="JogSlider">
-            <span>Feed (%): <input step="1" type="number" value="100" class="JogSliderLabel" id="JogFeedLabel"></span>
+            <span>Feed (%): <input step="1" title="Adjusts Feed Overide" type="number" value="100" class="JogSliderLabel" id="JogFeedLabel"></span>
             <div class="slidecontainer">
-                <input type="range" min="1" max="200" value="100" step="1" class="slider" id="JogFeed">
+                <input type="range" min="1" max="200" title="Adjusts Feed Overide" value="100" step="1" class="slider" id="JogFeed">
             </div>
         </div>
 
         <div class="JogSlider">
-            <span>Spindle (%): <input step="1" type="number" value="100" class="JogSliderLabel" id="JogSpindleLabel"></span>
+            <span>Spindle (%): <input step="1" type="number" title="Adjusts Spindle Overide" value="100" class="JogSliderLabel" id="JogSpindleLabel"></span>
             <div class="slidecontainer">
-                <input type="range" min="1" max="200" value="100" step="1" class="slider" id="JogSpindle">
+                <input type="range" min="1" max="200" title="Adjusts Spindle Overide" value="100" step="1" class="slider" id="JogSpindle">
             </div>
         </div>
         <div class="JogSlider">
-            <span>Rapid (%): <input step="1" type="number" value="100" step="25" class="JogSliderLabel" id="JogRapidLabel"></span>
+            <span>Rapid (%): <input step="1" type="number" title="Adjusts Rapid Overide" value="100" step="25" class="JogSliderLabel" id="JogRapidLabel"></span>
             <div class="slidecontainer">
-                <input type="range" min="1" max="3" value="3" step="1" class="slider" id="JogRapid">
+                <input type="range" min="1" max="3" title="Adjusts Rapid Overide" value="3" step="1" class="slider" id="JogRapid">
             </div>
         </div>
 
