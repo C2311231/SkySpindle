@@ -116,16 +116,3 @@ def ParseFile(file):
             except Exception as error:
                 print(error)
     return time
-def seconds_to_mixed_units(seconds):
-    # Calculate the number of days, hours, minutes, and remaining seconds
-    minutes, seconds = divmod(seconds, 60)
-    hours, minutes = divmod(minutes, 60)
-    days, hours = divmod(hours, 24)
-
-    return f"{round(days)}:{round(hours)}:{round(minutes)}:{round(seconds)}"
-
-    
-    
-    
-#3:19
-    
