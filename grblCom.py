@@ -8,10 +8,9 @@ import GRBLTools.gcodeParser as gcodeParser
 
 
 class GRBLConection():
-    def __init__(self, port, baudrate, SendData):
-        self.connection = serial.Serial(port, baudrate)
-        print('Opening Serial Port')
-        self.connection.write(str.encode("\r\n\r\n")) # Wake up GRBL Connection
+    def __init__(self, SendData):
+        self.connection = serial.Serial()
+        
         
         # Default Values
         self.WCO = [0,0,0]
@@ -32,6 +31,14 @@ class GRBLConection():
         self.Machinestatus = None
         self.linenum = 0
         
+        
+    def connect(self, port, baudrate):
+        self.connection.port = port
+        self.connection.baudrate = baudrate
+        self.connection.open()
+        print('Opening Serial Port')
+        self.connection.write(str.encode("\r\n\r\n")) # Wake up GRBL Connection
+    
     def SendCommand(self, command, Class='systemsent'):
         
         if isinstance(command, bytes):

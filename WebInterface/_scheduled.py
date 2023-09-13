@@ -1,16 +1,15 @@
-from flask_apscheduler import APScheduler
 import os
-app =''
-scheduler = APScheduler()
-scheduler.init_app(app)
+import time
+from ._commons import app, scheduler, socketio, GRBL_COMMAND_BUFFER, GRBL, STATE
+
+GRBL_COMMAND_BUFFER = []
 
 
 @scheduler.task('interval', id='SlowUpdate', seconds=5, max_instances=1)
 def SlowUpdate():
     OPERATIONS = os.listdir('./OperationFiles')
     socketio.emit('settings', GRBL.settings)
-    global State
-    socketio.emit('State', State)
+    socketio.emit('State', STATE)
     socketio.emit('operations', OPERATIONS)
 
 
@@ -35,4 +34,5 @@ def SendPositionData():
         socketio.emit('Machine Status', f'Status: {GRBL.Machinestatus}:{GRBL.subStatus}')
     else:
         socketio.emit('Machine Status', f'Status: {GRBL.Machinestatus}')
-    
+scheduler.start()
+scheduler.pause()

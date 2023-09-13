@@ -1,15 +1,12 @@
 from flask import request, jsonify
-from flask_socketio import SocketIO
 import time
 import grblCom
 import os
 import threading
-from . import app
+import helpers
+from ._commons import app, STATE, scheduler, socketio, GRBL_COMMAND_BUFFER, GRBL
 
 OPERATIONS = os.listdir('./OperationFiles')
-socketio = SocketIO(app)
-
-GRBL_COMMAND_BUFFER = []
 
 @socketio.on('Jog')
 def Jog(data):
@@ -62,14 +59,13 @@ def Connect(data):
     global GRBL
     global GRBLthread1
     global GRBLthread2
-    GRBL = grblCom.GRBLConection(data, 115200, socketio.emit)
+    GRBL.connect(data, 115200)
     scheduler.resume()
     GRBLthread1 = threading.Thread(target=GRBL.Async, args=(GRBL_COMMAND_BUFFER,), daemon=True)
     GRBLthread2 = threading.Thread(target=GRBL.GetData, args=(), daemon=True)
     GRBLthread1.start()
     GRBLthread2.start()
-    global State
-    State = 'Connected'
+    STATE = 'Connected'
     GRBL_COMMAND_BUFFER.append(['GetGRBLSettings'])
     
 @socketio.on('Disconnect')
@@ -77,8 +73,7 @@ def Disconnect():
     GRBL.Async = False
     GRBL.connection.close()
     scheduler.pause()
-    global State
-    State = 'Disconnected'
+    STATE = 'Disconnected'
     
 @socketio.on('ChangeSetting')
 def ChangeSetting(data):
@@ -86,8 +81,8 @@ def ChangeSetting(data):
     
 @socketio.on('connect')
 def SendPorts():
-    socketio.emit('USBPorts', grblCom.getUSBPorts())
-    socketio.emit('State', State)
+    socketio.emit('USBPorts', helpers.getUSBPorts())
+    socketio.emit('State', STATE)
     socketio.emit('operations', OPERATIONS)
     try:
         if GRBL.loadedFile != None:
