@@ -12,7 +12,7 @@ def Async(self, buffer):
             if time.time() - 0.3 > self.lastPosTime:
                 self.SendCommand(b'?', Class='status')
                 self.lastPosTime = time.time()
-            self.prossesSend(buffer)
+            prossesSend(self, buffer)
         time.sleep(0.2)
 
 def prossesSend(self, buffer):       

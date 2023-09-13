@@ -1,8 +1,7 @@
 from flask import request, jsonify
 import time
-import grblCom
+import GRBLTools as grbl
 import os
-import threading
 import helpers
 from ._commons import app, STATE, scheduler, socketio, GRBL_COMMAND_BUFFER, GRBL
 
@@ -56,16 +55,10 @@ def RapidOveride(data):
 
 @socketio.on('Connect')
 def Connect(data):
-    global GRBL
-    global GRBLthread1
-    global GRBLthread2
     GRBL.connect(data, 115200)
     scheduler.resume()
-    GRBLthread1 = threading.Thread(target=GRBL.Async, args=(GRBL_COMMAND_BUFFER,), daemon=True)
-    GRBLthread2 = threading.Thread(target=GRBL.GetData, args=(), daemon=True)
-    GRBLthread1.start()
-    GRBLthread2.start()
-    STATE = 'Connected'
+    STATE.STATE = 'Connected'
+    GRBL.StartThreads()
     GRBL_COMMAND_BUFFER.append(['GetGRBLSettings'])
     
 @socketio.on('Disconnect')
@@ -73,7 +66,8 @@ def Disconnect():
     GRBL.Async = False
     GRBL.connection.close()
     scheduler.pause()
-    STATE = 'Disconnected'
+    
+    STATE.STATE = 'Disconnected'
     
 @socketio.on('ChangeSetting')
 def ChangeSetting(data):
@@ -82,7 +76,8 @@ def ChangeSetting(data):
 @socketio.on('connect')
 def SendPorts():
     socketio.emit('USBPorts', helpers.getUSBPorts())
-    socketio.emit('State', STATE)
+    
+    socketio.emit('STATE', STATE.STATE)
     socketio.emit('operations', OPERATIONS)
     try:
         if GRBL.loadedFile != None:

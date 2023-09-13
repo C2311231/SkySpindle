@@ -9,7 +9,7 @@ GRBL_COMMAND_BUFFER = []
 def SlowUpdate():
     OPERATIONS = os.listdir('./OperationFiles')
     socketio.emit('settings', GRBL.settings)
-    socketio.emit('State', STATE)
+    socketio.emit('State', STATE.STATE)
     socketio.emit('operations', OPERATIONS)
 
 

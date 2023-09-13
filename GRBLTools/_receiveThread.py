@@ -1,13 +1,14 @@
 import time
 
 def GetData(self):
+    self.Async = True
     while self.Async:
         line = self.connection.readline().decode().strip()
         if self.Async == False:
             break
         
         if line.startswith('<') and line.endswith('>'):
-            self.StatusReportProcess(line)
+            StatusReportProcess(self, line)
             self.SocketEmit('console', {'data': line, 'class': 'status'})
             
         elif line.startswith('ok'):
