@@ -1,5 +1,6 @@
 import time
 import threading
+from ._fileTransmission import SendFile
 
 def Async(self, buffer):
     self.Async=True
@@ -45,7 +46,7 @@ def prossesSend(self, buffer):
             elif command[0] == 'StartOperation':
                 self.requested -= 1
                 if self.status == 'Idle':
-                    thread = threading.Thread(target=self.SendFile, args=(f'./OperationFiles/{command[1]}','Reliable', buffer), daemon=True)
+                    thread = threading.Thread(target=SendFile, args=(self, f'./OperationFiles/{command[1]}','Reliable', buffer), daemon=True)
                     thread.start()
             elif command[0] == 'Home':
                     self.SendCommand(f'$H{command[1][0]}')
