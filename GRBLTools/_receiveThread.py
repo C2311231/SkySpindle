@@ -19,7 +19,7 @@ def GetData(self):
             self.SocketEmit('console', {'data': line, 'class': 'recive'}) 
               
             if 'N' not in line:
-                self.processGRBLSetting(line)
+                processGRBLSetting(self, line)
                 
             else:
                 data = line.replace('$N', '').split('=')

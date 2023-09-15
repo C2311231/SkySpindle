@@ -1,10 +1,8 @@
 import serial
 import time
 import threading
-from .gcodeParser import *
 from ._receiveThread import GetData
 from ._transmitThread import Async
-import helpers
 
 class GRBLConection():
     def __init__(self, SendData, GRBL_COMMAND_BUFFER):
@@ -29,6 +27,7 @@ class GRBLConection():
         self.subStatus = None
         self.Machinestatus = None
         self.linenum = 0
+        self.OperationETA = 0
         
         
     def connect(self, port, baudrate):
@@ -120,14 +119,12 @@ class GRBLConection():
             with open(f'./OperationFiles/{file}') as file:
                 file = file.readlines()
                 self.fileLenght = len(file)
-                self.OperationETA = helpers.seconds_to_mixed_units(gcodeParser.ParseFile(file))
-            self.SocketEmit('ETA', self.OperationETA)
             self.SocketEmit('LoadedFileName', self.loadedFile)
             self.SocketEmit('LineNum', [0, self.fileLenght])
         else:
             self.fileLenght = 0
-            self.OperationETA = gcodeParser.seconds_to_mixed_units(0)
-            self.SocketEmit('ETA', self.OperationETA)
+            self.OperationETA = 0
+            self.SocketEmit('ETA', 0)
             self.SocketEmit('LoadedFileName', self.loadedFile)
             self.SocketEmit('LineNum', [0, self.fileLenght])
     
