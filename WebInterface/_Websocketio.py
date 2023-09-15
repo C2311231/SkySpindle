@@ -76,12 +76,10 @@ def ChangeSetting(data):
 @socketio.on('connect')
 def SendPorts():
     socketio.emit('USBPorts', helpers.getUSBPorts())
-    
     socketio.emit('STATE', STATE.STATE)
     socketio.emit('operations', OPERATIONS)
     try:
         if GRBL.loadedFile != None:
-            socketio.emit('ETA', GRBL.OperationETA)
             LoadFile(GRBL.loadedFile)
             socketio.emit('LineNum', [0, GRBL.fileLenght])
             socketio.emit('LoadedFileName', GRBL.loadedFile)
@@ -115,17 +113,6 @@ def DeleteFile(data):
     os.remove(f'./OperationFiles/{data}')
     OPERATIONS = os.listdir('./OperationFiles')
     socketio.emit('operations', OPERATIONS)
-
-@app.route('/upload', methods=['POST'])
-def upload_file():
-    uploaded_file = request.files['file']
-    if uploaded_file:
-        filename = uploaded_file.filename
-        uploaded_file.save(os.path.join('OperationFiles', filename))
-        OPERATIONS = os.listdir('./OperationFiles')
-        socketio.emit('operations', OPERATIONS)
-        return jsonify(message='File uploaded successfully.')
-    return jsonify(message='No file uploaded.'), 400
 
 @socketio.on('ESTOP')
 def ESTOP():

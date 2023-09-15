@@ -49,6 +49,8 @@ def SendFile(self, filePath, mode, buffer):
                     if self.KILLOPERATION:
                         return
                     self.notSending = True
+                    completion =  (self.linenum/self.fileLenght)*100
+                    self.OperationETA = (100-completion)*((time.time() - self.operationStartTime)/completion)
                     time.sleep(0.3)
                 self.linenum += 1
                 self.SocketEmit('LineNum', [self.linenum, self.fileLenght])

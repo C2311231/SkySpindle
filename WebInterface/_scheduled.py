@@ -1,9 +1,7 @@
 import os
 import time
 from ._commons import app, scheduler, socketio, GRBL_COMMAND_BUFFER, GRBL, STATE
-
-GRBL_COMMAND_BUFFER = []
-
+import helpers
 
 @scheduler.task('interval', id='SlowUpdate', seconds=5, max_instances=1)
 def SlowUpdate():
@@ -30,6 +28,7 @@ def SendPositionData():
     socketio.emit('positionW', wpos)
     if GRBL.status == 'Operating':
         socketio.emit('operationTime', time.time() - GRBL.operationStartTime)
+        socketio.emit('ETA', helpers.seconds_to_mixed_units(GRBL.OperationETA))
     if GRBL.subStatus:
         socketio.emit('Machine Status', f'Status: {GRBL.Machinestatus}:{GRBL.subStatus}')
     else:
