@@ -117,7 +117,7 @@ window.socket.on('LoadedFileName', function (data) {
 });
 
 OperationCancel.onclick = function(){
-  window.socket.emit('UnloadStopOperation')
+  window.socket.emit('unloadStopOperation')
 }
 OperationHold.onclick = function(){
   window.socket.emit('HoldOperation')
