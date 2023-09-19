@@ -3,7 +3,7 @@ from ._commons import app, SETTINGCODES
 
 @app.route('/')
 def home():
-    return render_template('layout.html', SettingsData=SETTINGCODES)
+    return render_template('main.html', SettingsData=SETTINGCODES)
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
