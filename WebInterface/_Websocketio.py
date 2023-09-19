@@ -7,19 +7,19 @@ from ._commons import app, STATE, scheduler, socketio, GRBL_COMMAND_BUFFER, GRBL
 
 OPERATIONS = os.listdir('./OperationFiles')
 
-@socketio.on('Jog')
+@socketio.on('jog')
 def Jog(data):
     GRBL_COMMAND_BUFFER.append(['Jog', [data['x'], data['y'], data['z'], data['f']]])
     
-@socketio.on('ZeroAxis')
+@socketio.on('zeroAxis')
 def ZeroAxis(data):
     GRBL_COMMAND_BUFFER.append(['ZeroAxis', [data]])
 
-@socketio.on('ToggleMist')
+@socketio.on('toggleMist')
 def ToggleMist():
     GRBL_COMMAND_BUFFER.append(['ToggleMist', []])
     
-@socketio.on('ToggleFlood')
+@socketio.on('toggleFlood')
 def ToggleFlood():
     GRBL_COMMAND_BUFFER.append(['ToggleFlood', []])
 
@@ -37,23 +37,23 @@ def homeAxis(data):
 def toggleSpindle(data):
     GRBL_COMMAND_BUFFER.append(['SpindleControl', [data]])
     
-@socketio.on('Move')
+@socketio.on('move')
 def Move(data):
     GRBL_COMMAND_BUFFER.append(['Move', [data]])
     
-@socketio.on('SpindleOveride')
+@socketio.on('spindleOveride')
 def SpindleOveride(data):
     GRBL_COMMAND_BUFFER.append(['adjustSpindle', data])
     
-@socketio.on('FeedOveride')
+@socketio.on('feedOveride')
 def FeedOveride(data):
     GRBL_COMMAND_BUFFER.append(['adjustFeed', data])
     
-@socketio.on('RapidOveride')
+@socketio.on('rapidOveride')
 def RapidOveride(data):
     GRBL_COMMAND_BUFFER.append(['adjustRapid', data])
 
-@socketio.on('Connect')
+@socketio.on('GRBLconnect')
 def Connect(data):
     GRBL.connect(data, 115200)
     scheduler.resume()
@@ -61,7 +61,7 @@ def Connect(data):
     GRBL.StartThreads()
     GRBL_COMMAND_BUFFER.append(['GetGRBLSettings'])
     
-@socketio.on('Disconnect')
+@socketio.on('GRBLdisconnect')
 def Disconnect():
     GRBL.Async = False
     GRBL.connection.close()
@@ -69,7 +69,7 @@ def Disconnect():
     
     STATE.STATE = 'Disconnected'
     
-@socketio.on('ChangeSetting')
+@socketio.on('changeSetting')
 def ChangeSetting(data):
     GRBL_COMMAND_BUFFER.append(['ChangeSetting', [data[0], data[1]]])
     
@@ -81,34 +81,34 @@ def SendPorts():
     try:
         if GRBL.loadedFile != None:
             LoadFile(GRBL.loadedFile)
-            socketio.emit('LineNum', [0, GRBL.fileLenght])
-            socketio.emit('LoadedFileName', GRBL.loadedFile)
+            socketio.emit('lineNum', [0, GRBL.fileLenght])
+            socketio.emit('loadedFileName', GRBL.loadedFile)
 
         if GRBL.status == 'Operating':
-            socketio.emit('OperatingStartTime', GRBL.operationStartTime)
-            socketio.emit('LineNum', [GRBL.linenum, GRBL.fileLenght])
+            socketio.emit('operatingStartTime', GRBL.operationStartTime)
+            socketio.emit('lineNum', [GRBL.linenum, GRBL.fileLenght])
             socketio.emit('operationTime', time.time() - GRBL.operationStartTime)
     except:
         socketio.emit('ETA', 0)
-        socketio.emit('LoadedFileName', None)
-        socketio.emit('LineNum', [0, 0])
-        socketio.emit('LoadedFile', [''])
+        socketio.emit('loadedFileName', None)
+        socketio.emit('lineNum', [0, 0])
+        socketio.emit('loadedFile', [''])
         socketio.emit('operationTime', 0)
         
-@socketio.on('Start')
+@socketio.on('start')
 def StartCycle(data):
     print(data)
     GRBL_COMMAND_BUFFER.append(['SendCommand', ['~']])
     if GRBL.status != 'Operating':
         GRBL_COMMAND_BUFFER.append(['StartOperation', data])
 
-@socketio.on('LoadFile')
+@socketio.on('loadFile')
 def LoadFile(data):
     GRBL.LoadFile(data)
     with open(f'./OperationFiles/{data}') as file:
-        socketio.emit('LoadedFile', file.readlines())
+        socketio.emit('loadedFile', file.readlines())
 
-@socketio.on('DeleteFile')
+@socketio.on('deleteFile')
 def DeleteFile(data):
     os.remove(f'./OperationFiles/{data}')
     OPERATIONS = os.listdir('./OperationFiles')
@@ -119,7 +119,7 @@ def ESTOP():
     print('ESTOP!!!!')
     GRBL.SendCommand(b'\x18')
 
-@socketio.on('UNLOCKALARM')
+@socketio.on('unlockAlarm')
 def Unlock():
     GRBL.SendCommand('$X')
     
@@ -127,18 +127,18 @@ def Unlock():
 def UnloadStopOperation():
     GRBL.KILLOPERATION = True
     GRBL.LoadFile(None)
-    socketio.emit('LoadedFile', [''])
+    socketio.emit('loadedFile', [''])
     GRBL.SendCommand('!')
     time.sleep(0.5)
     GRBL.SendCommand(b'\x18')
     GRBL.status = 'Idle'
     socketio.emit('operationTime', 0)
     
-@socketio.on('HoldOperation')
+@socketio.on('holdOperation')
 def HoldOperation():
     GRBL.SendCommand('!')
     
-@socketio.on('PauseOperation')
+@socketio.on('pauseOperation')
 def PauseOperation():
     GRBL.SendCommand('!')
     GRBL.SendCommand(b'\x9E')

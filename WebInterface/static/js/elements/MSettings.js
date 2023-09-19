@@ -73,7 +73,7 @@ for (let i = 0; i < machineSetting.length; i++) {
         clearTimeout(timeoutId);
         var inputData = this; // Use 'this' to refer to the current inputElement
         timeoutId = setTimeout(function () {
-            window.socket.emit('ChangeSetting', [inputData.dataset.send, inputData.value]);
+            window.socket.emit('changeSetting', [inputData.dataset.send, inputData.value]);
         }, 500);
     };
 }

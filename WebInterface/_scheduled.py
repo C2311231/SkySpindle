@@ -7,7 +7,7 @@ import helpers
 def SlowUpdate():
     OPERATIONS = os.listdir('./OperationFiles')
     socketio.emit('settings', GRBL.settings)
-    socketio.emit('State', STATE.STATE)
+    socketio.emit('state', STATE.STATE)
     socketio.emit('operations', OPERATIONS)
 
 
@@ -30,8 +30,8 @@ def SendPositionData():
         socketio.emit('operationTime', time.time() - GRBL.operationStartTime)
         socketio.emit('ETA', helpers.seconds_to_mixed_units(GRBL.OperationETA))
     if GRBL.subStatus:
-        socketio.emit('Machine Status', f'Status: {GRBL.Machinestatus}:{GRBL.subStatus}')
+        socketio.emit('machineStatus', f'Status: {GRBL.Machinestatus}:{GRBL.subStatus}')
     else:
-        socketio.emit('Machine Status', f'Status: {GRBL.Machinestatus}')
+        socketio.emit('machineStatus', f'Status: {GRBL.Machinestatus}')
 scheduler.start()
 scheduler.pause()

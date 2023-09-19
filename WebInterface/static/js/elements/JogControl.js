@@ -49,25 +49,25 @@ var timeoutId;
 // Slider Handlers
 
 MXpos.addEventListener("click", function () {
-    window.socket.emit('ZeroAxis', ['X']);
+    window.socket.emit('zeroAxis', ['X']);
 });
 MYpos.addEventListener("click", function () {
-    window.socket.emit('ZeroAxis', ['Y']);
+    window.socket.emit('zeroAxis', ['Y']);
 });
 MZpos.addEventListener("click", function () {
-    window.socket.emit('ZeroAxis', ['Z']);
+    window.socket.emit('zeroAxis', ['Z']);
 });
 
 ResetZero.addEventListener("click", function () {
-    window.socket.emit('ZeroAxis', ['X', 'Y', 'Z']);
+    window.socket.emit('zeroAxis', ['X', 'Y', 'Z']);
 });
 
 ToggleMist.addEventListener("click", function () {
-    window.socket.emit('ToggleMist');
+    window.socket.emit('toggleMist');
 });
 
 ToggleFlood.addEventListener("click", function () {
-    window.socket.emit('ToggleFlood');
+    window.socket.emit('toggleFlood');
 });
 
 FeedLabel.value = Feed.value;
@@ -89,7 +89,7 @@ Feed.oninput = function () {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(function () {
     FeedLabel.value = Feed.value;
-    window.socket.emit('FeedOveride', Feed.value);
+    window.socket.emit('feedOveride', Feed.value);
     }, 500)
 }
 
@@ -103,14 +103,14 @@ FeedLabel.oninput = function () {
         FeedLabel.value = 1;
     }
     Feed.value = FeedLabel.value;
-    window.socket.emit('FeedOveride', FeedLabel.value);
+    window.socket.emit('feedOveride', FeedLabel.value);
     }, 500)
 }
 SpindleOveride.oninput = function () {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(function () {
     SpindleLabel.value = SpindleOveride.value;
-    window.socket.emit('SpindleOveride', SpindleOveride.value);
+    window.socket.emit('spindleOveride', SpindleOveride.value);
     }, 500)
 }
 
@@ -124,23 +124,23 @@ SpindleLabel.oninput = function () {
         SpindleLabel.value = 1;
     }
     SpindleOveride.value = SpindleLabel.value;
-    window.socket.emit('SpindleOveride', SpindleLabel.value);
+    window.socket.emit('spindleOveride', SpindleLabel.value);
     }, 500)
 }
 
 RapidOveride.oninput = function () {
     if (this.value == 1) {
         RapidOverideLabel.value = 25;
-        window.socket.emit('RapidOveride', RapidOverideLabel.value);
+        window.socket.emit('rapidOveride', RapidOverideLabel.value);
     }
 
     else if (this.value == 2) {
         RapidOverideLabel.value = 50;
-        window.socket.emit('RapidOveride', RapidOverideLabel.value);
+        window.socket.emit('rapidOveride', RapidOverideLabel.value);
     }
     else {
         RapidOverideLabel.value = 100;
-        window.socket.emit('RapidOveride', RapidOverideLabel.value);
+        window.socket.emit('rapidOveride', RapidOverideLabel.value);
     }
 }
 
@@ -161,7 +161,7 @@ RapidOverideLabel.oninput = function () {
 };
 
 
-window.socket.on('Overides', function (data) {
+window.socket.on('overides', function (data) {
     Feed.value = data[0];
     FeedLabel.value = data[0];
     if (data[1]/25 == 4){
@@ -183,32 +183,32 @@ window.socket.on('positionM', function (data) {
 
 for (var i = 0; i < JogLeft.length; i++) {
     JogLeft[i].addEventListener("click", function () {
-        window.socket.emit('Jog', { x: -(JogDis.value), y: 0, z: 0, f: window.feedrate});
+        window.socket.emit('jog', { x: -(JogDis.value), y: 0, z: 0, f: window.feedrate});
     });
 }
 for (var i = 0; i < JogRight.length; i++) {
     JogRight[i].addEventListener("click", function () {
-        window.socket.emit('Jog', { x: JogDis.value, y: 0, z: 0, f: (window.feedrate)});
+        window.socket.emit('jog', { x: JogDis.value, y: 0, z: 0, f: (window.feedrate)});
     });
 }
 for (var i = 0; i < JogUp.length; i++) {
     JogUp[i].addEventListener("click", function () {
-        window.socket.emit('Jog', { x: 0, y: JogDis.value, z: 0, f: (window.feedrate)});
+        window.socket.emit('jog', { x: 0, y: JogDis.value, z: 0, f: (window.feedrate)});
     });
 }
 for (var i = 0; i < JogDown.length; i++) {
     JogDown[i].addEventListener("click", function () {
-        window.socket.emit('Jog', { x: 0, y: -(JogDis.value), z: 0, f: (window.feedrate)});
+        window.socket.emit('jog', { x: 0, y: -(JogDis.value), z: 0, f: (window.feedrate)});
     });
 }
 for (var i = 0; i < JogVUp.length; i++) {
     JogVUp[i].addEventListener("click", function () {
-        window.socket.emit('Jog', { x: 0, y: 0, z: JogDis.value, f: (window.feedrate)});
+        window.socket.emit('jog', { x: 0, y: 0, z: JogDis.value, f: (window.feedrate)});
     });
 }
 for (var i = 0; i < JogVDown.length; i++) {
     JogVDown[i].addEventListener("click", function () {
-        window.socket.emit('Jog', { x: 0, y: 0, z: -(JogDis.value), f: (window.feedrate)});
+        window.socket.emit('jog', { x: 0, y: 0, z: -(JogDis.value), f: (window.feedrate)});
     });
 }
 
@@ -236,7 +236,7 @@ Xpos.oninput = function () {
     window.updatePos = false
     clearTimeout(timeoutId);
     timeoutId = setTimeout(function () {
-    window.socket.emit('Move', `X${Xpos.value} F${window.feedrate}`);
+    window.socket.emit('move', `X${Xpos.value} F${window.feedrate}`);
     window.updatePos = true;
     }, 1000)
     
@@ -245,7 +245,7 @@ Ypos.oninput= function () {
     window.updatePos = false
     clearTimeout(timeoutId);
     timeoutId = setTimeout(function () {
-    window.socket.emit('Move', `Y${Ypos.value} F${window.feedrate}`);
+    window.socket.emit('move', `Y${Ypos.value} F${window.feedrate}`);
     window.updatePos = true;
     }, 1000)
 }
@@ -253,7 +253,7 @@ Zpos.oninput = function () {
     window.updatePos = false
     clearTimeout(timeoutId);
     timeoutId = setTimeout(function () {
-    window.socket.emit('Move', `Z${Zpos.value} F${window.feedrate}`);
+    window.socket.emit('move', `Z${Zpos.value} F${window.feedrate}`);
     window.updatePos = true;
     }, 1000)
 }

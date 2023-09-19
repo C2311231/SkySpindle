@@ -14,5 +14,5 @@ function UpdateAlarm(data) {
 };
 
 ALARMUnlock.onclick = function(){
-    window.socket.emit('UNLOCKALARM')
+    window.socket.emit('unlockAlarm')
 }

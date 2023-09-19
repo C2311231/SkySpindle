@@ -26,7 +26,7 @@ SaveFileBtn.addEventListener('click', function () {
         }
 )
 
-window.socket.on('LoadedFile', function (data) {
+window.socket.on('loadedFile', function (data) {
     window.loadedfile = ''
     data.forEach(element => {
         window.loadedfile += element;
@@ -34,7 +34,7 @@ window.socket.on('LoadedFile', function (data) {
     FileEditor.session.setValue(window.loadedfile);
 });
 
-window.socket.on('LineNum', function (data) {
+window.socket.on('lineNum', function (data) {
     FileEditor.getSession().clearAnnotations();
     FileEditor.getSession().setAnnotations([{
     row: data[0] -1,

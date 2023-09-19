@@ -39,7 +39,7 @@ window.socket.on('operations', function (data) {
 });
 
 function loadFile(element) {
-  window.socket.emit('LoadFile', element);
+  window.socket.emit('loadFile', element);
   window.loadedfilename = element
 }
 
@@ -86,7 +86,7 @@ window.socket.on('ETA', function (data) {
   OperationETA.innerHTML = `ETA: ${data}`
 });
 
-window.socket.on('LineNum', function (data) {
+window.socket.on('lineNum', function (data) {
   OperationLineNum.innerHTML = `Line Number: ${data[0]}/${data[1]}`
   var completionfull = (data[0]/data[1])*100
   if(completionfull>=10){
@@ -112,7 +112,7 @@ window.socket.on('LineNum', function (data) {
     document.title = `SkySpindle - Done`
   }
 });
-window.socket.on('LoadedFileName', function (data) {
+window.socket.on('loadedFileName', function (data) {
   LoadedFileName.innerHTML = data
 });
 
@@ -120,13 +120,13 @@ OperationCancel.onclick = function(){
   window.socket.emit('unloadStopOperation')
 }
 OperationHold.onclick = function(){
-  window.socket.emit('HoldOperation')
+  window.socket.emit('holdOperation')
 }
 OperationPause.onclick = function(){
-  window.socket.emit('PauseOperation')
+  window.socket.emit('pauseOperation')
 }
 OperationStart.onclick = function(){
-  window.socket.emit('Start', LoadedFileName.innerHTML)
+  window.socket.emit('start', LoadedFileName.innerHTML)
 }
 function CheckForLoad(){
   if (window.loadedfile != ''){
@@ -141,5 +141,5 @@ function CheckForLoad(){
 setInterval(CheckForLoad, 500)
 
 function deleteFile(element){
-  window.socket.emit('DeleteFile', element);
+  window.socket.emit('deleteFile', element);
 }

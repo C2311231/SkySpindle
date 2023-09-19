@@ -22,11 +22,11 @@ function DisconnectUpdate() {
 
 //Connection Commands
 Connect.addEventListener('click', function () {
-    window.socket.emit('Connect', Port.value)
+    window.socket.emit('GRBLconnect', Port.value)
     ConnectUpdate();
 })
 Disconect.addEventListener('click', function () {
-    window.socket.emit('Disconnect')
+    window.socket.emit('GRBLdisconnect')
     DisconnectUpdate();
 })
 
@@ -37,7 +37,7 @@ window.socket.on('USBPorts', function (data) {
     }
 })
 
-window.socket.on('State', function (data) {
+window.socket.on('state', function (data) {
     if (data == 'Disconnected'){
         DisconnectUpdate();
     }
@@ -46,7 +46,7 @@ window.socket.on('State', function (data) {
     }
 });
 
-window.socket.on('Machine Status', function (data) {
+window.socket.on('machineStatus', function (data) {
     GrblStatus.innerText = data;
     UpdateAlarm(data);
 });

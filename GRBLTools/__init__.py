@@ -119,14 +119,14 @@ class GRBLConection():
             with open(f'./OperationFiles/{file}') as file:
                 file = file.readlines()
                 self.fileLenght = len(file)
-            self.SocketEmit('LoadedFileName', self.loadedFile)
-            self.SocketEmit('LineNum', [0, self.fileLenght])
+            self.SocketEmit('loadedFileName', self.loadedFile)
+            self.SocketEmit('lineNum', [0, self.fileLenght])
         else:
             self.fileLenght = 0
             self.OperationETA = 0
             self.SocketEmit('ETA', 0)
-            self.SocketEmit('LoadedFileName', self.loadedFile)
-            self.SocketEmit('LineNum', [0, self.fileLenght])
+            self.SocketEmit('loadedFileName', self.loadedFile)
+            self.SocketEmit('lineNum', [0, self.fileLenght])
     
     def StartThreads(self):
         self.thread1 = threading.Thread(target=GetData, args=(self,), daemon=True)

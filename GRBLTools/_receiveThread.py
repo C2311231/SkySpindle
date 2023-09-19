@@ -105,7 +105,7 @@ def StatusReportProcess(self, response):
             elif 'Ov' in item:
                 value = item.replace('Ov:', '')
                 self.Ov = list(map(float, value.split(',')))
-                self.SocketEmit('Overides', self.Ov)
+                self.SocketEmit('overides', self.Ov)
                 
             elif 'Ln' in item:
                 self.LineNum = int(item)
