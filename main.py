@@ -1,4 +1,3 @@
-from WebInterface import app, socketio
 import helpers
 import os
 import requests
@@ -11,7 +10,7 @@ if os.path.exists('./data/setting_codes_en_US.csv') == False:
     print("Done")
 
 if os.path.exists('./WebInterface/static/src-min-noconflict/ace.js') == False:
-    print("Downloading ACE")
+    print("Downloading ACE         (May take a while)")
     for file in helpers.getGitHubFolderContents('https://github.com/ajaxorg/ace-builds/tree/480d8ed11f92390190cff8093c376dc5514b3db0/', 'src-min-noconflict'):
         helpers.pullFile('https://raw.githubusercontent.com/ajaxorg/ace-builds/master/' + file, f'./WebInterface/static/{file}')
     print("Done")
@@ -23,5 +22,8 @@ if os.path.exists('./WebInterface/static/js/SocketIo.js') == False:
     print("Done")
 
 os.makedirs("./OperationFiles", exist_ok=True)
+
+
+from WebInterface import app, socketio
 
 socketio.run(app, debug=False, host='0.0.0.0')

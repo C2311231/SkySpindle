@@ -6,22 +6,7 @@ github_base_url = 'https://github.com/ajaxorg/ace-builds/tree/480d8ed11f92390190
 folder = 'src-min-noconflict'
 github_raw_base_url = 'https://raw.githubusercontent.com/ajaxorg/ace-builds/master/'
 
-def pullFile(source, target):
-    r = requests.get(source)
-    os.makedirs(os.path.dirname(target), exist_ok=True)
-    with open(target, 'w') as file:
-         file.write((r.content).decode())
-         
-def getGitHubFolderContents(base_url, folder):
-    result = requests.get(base_url + folder)
-    data = json.loads(result.text)
-    fileNames = []
-    for item in data["payload"]["tree"]["items"]:
-        if item["contentType"] == "directory":
-            fileNames = fileNames + getGitHubFolderContents(base_url, item["path"])
-        else:
-            fileNames.append(item["path"])
-    return fileNames
+
 
 
 for file in getGitHubFolderContents(github_base_url, folder):

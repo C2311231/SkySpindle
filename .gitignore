@@ -1,2 +1,6 @@
 __pycache__
 .vscode
+src-min-noconflict
+data
+OperationFiles
+SocketIO.js
