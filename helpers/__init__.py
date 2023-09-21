@@ -1,5 +1,6 @@
 import serial.tools.list_ports
 import csv
+import requests
 
 def seconds_to_mixed_units(seconds):
     # Calculate the number of days, hours, minutes, and remaining seconds
@@ -22,3 +23,20 @@ def getCSVData(filename):
         for item in data:
             Data.append(item)
     return Data
+
+def pullFile(source, target):
+    r = requests.get(source)
+    os.makedirs(os.path.dirname(target), exist_ok=True)
+    with open(target, 'w') as file:
+         file.write((r.content).decode())
+         
+def getGitHubFolderContents(base_url, folder):
+    result = requests.get(base_url + folder)
+    data = json.loads(result.text)
+    fileNames = []
+    for item in data["payload"]["tree"]["items"]:
+        if item["contentType"] == "directory":
+            fileNames = fileNames + getGitHubFolderContents(base_url, item["path"])
+        else:
+            fileNames.append(item["path"])
+    return fileNames
