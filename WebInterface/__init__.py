@@ -1,9 +1,22 @@
 from flask import render_template
 from ._commons import app, SETTINGCODES
+import requests
+import json
 
 @app.route('/')
 def home():
-    return render_template('main.html', SettingsData=SETTINGCODES)
+    notifications = requests.get("https://raw.githubusercontent.com/C2311231/SkySpindle/main/version.json")
+    if notifications.status_code == 200:
+        notifications = json.loads(notifications.content)
+        
+        with open('./version.json') as version:
+            print(version)
+            version = json.load(version)
+        if version == notifications:
+            notifications = None
+    else:
+        notifications = None
+    return render_template('main.html', SettingsData=SETTINGCODES, notifications=notifications)
 
 @app.route('/upload', methods=['POST'])
 def upload_file():

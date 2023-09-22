@@ -142,3 +142,9 @@ def HoldOperation():
 def PauseOperation():
     GRBL.SendCommand('!')
     GRBL.SendCommand(b'\x9E')
+    
+@socketio.on('UPDATETOLATEST')
+def PROGRAMUPDATE():
+    files = helpers.getGitHubFolderContents("https://github.com/C2311231/SkySpindle",'')
+    for file in files:
+        helpers.pullFile("https://raw.githubusercontent.com/C2311231/SkySpindle/main/" + file, f'./{file}')
