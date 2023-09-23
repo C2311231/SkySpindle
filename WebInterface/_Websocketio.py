@@ -1,9 +1,10 @@
-from flask import request, jsonify
 import time
 import GRBLTools as grbl
 import os
 import helpers
 from ._commons import app, STATE, scheduler, socketio, GRBL_COMMAND_BUFFER, GRBL
+import requests
+import json
 
 OPERATIONS = os.listdir('./OperationFiles')
 
@@ -145,6 +146,19 @@ def PauseOperation():
     
 @socketio.on('UPDATETOLATEST')
 def PROGRAMUPDATE():
-    files = helpers.getGitHubFolderContents("https://github.com/C2311231/SkySpindle",'')
-    for file in files:
-        helpers.pullFile("https://raw.githubusercontent.com/C2311231/SkySpindle/main/" + file, f'./{file}')
+    import subprocess
+    contents = requests.get(f"https://api.github.com/repos/C2311231/SkySpindle/contents")
+    if contents.status_code == 200:
+        contents = json.loads(contents.content)
+    else:
+        print("Failed To Get Updates")
+        return
+    for item in contents:
+        if item["type"] == "dir":
+            files = helpers.getGitHubFolderContents(f"https://github.com/C2311231/SkySpindle/tree/main/{item['path']}",'')
+            for file in files:
+                helpers.pullFile("https://raw.githubusercontent.com/C2311231/SkySpindle/main/" + file, f'./{file}')
+        else:
+            helpers.pullFile("https://raw.githubusercontent.com/C2311231/SkySpindle/main/" + item['path'], f"./{item['path']}")
+    subprocess.run(["python", "main.py"])
+    exit()
