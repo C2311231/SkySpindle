@@ -1,4 +1,4 @@
-from flask import render_template
+from flask import render_template, request, jsonify
 from ._commons import app, SETTINGCODES
 import requests
 import json
