@@ -49,4 +49,4 @@ HTML, CSS, JavaScript, Python, WebSockets
 ## Notes
 
 This project was primarily a learning exercise in web interfaces and web development, created after acquiring a low-cost CNC machine.
-It demonstrates experimentation with web-based CNC control, threading, and real-time updates. It is unmaintained ABSOLUTELY NOT recommended for use on a live machine.
+It demonstrates experimentation with web-based CNC control, threading, and real-time updates. It is unmaintained, has little error handling, and is ABSOLUTELY NOT recommended for use on a live machine.
