@@ -11,7 +11,7 @@ if os.path.exists('./data/setting_codes_en_US.csv') == False:
 
 if os.path.exists('./WebInterface/static/src-min-noconflict/ace.js') == False:
     print("Downloading ACE         (May take a while)")
-    for file in helpers.getGitHubFolderContents('https://github.com/ajaxorg/ace-builds/tree/480d8ed11f92390190cff8093c376dc5514b3db0/', 'src-min-noconflict'):
+    for file in helpers.getGitHubFolderContents('https://api.github.com/repos/ajaxorg/ace-builds/contents/src-min-noconflict?ref=480d8ed11f92390190cff8093c376dc5514b3db0'):
         helpers.pullFile('https://raw.githubusercontent.com/ajaxorg/ace-builds/master/' + file, f'./WebInterface/static/{file}')
     print("Done")
 

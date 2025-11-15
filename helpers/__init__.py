@@ -32,13 +32,17 @@ def pullFile(source, target):
     with open(target, 'w') as file:
          file.write((r.content).decode())
          
-def getGitHubFolderContents(base_url, folder):
-    result = requests.get(base_url + folder)
-    data = json.loads(result.text)
+def getGitHubFolderContents(api_url):
+    result = requests.get(api_url)
+    data = result.json()  # safer than json.loads(result.text)
     fileNames = []
-    for item in data["payload"]["tree"]["items"]:
-        if item["contentType"] == "directory":
-            fileNames = fileNames + getGitHubFolderContents(base_url, item["path"])
+
+    for item in data:
+        if item["type"] == "dir":
+            # Recursive call for subdirectories
+            sub_url = item["url"]
+            fileNames.extend(getGitHubFolderContents(sub_url))
         else:
             fileNames.append(item["path"])
+
     return fileNames
